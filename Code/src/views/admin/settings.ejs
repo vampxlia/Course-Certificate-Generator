@@ -21,8 +21,8 @@
     <button class="tab-btn active" onclick="showTab('tab-signature', this)" type="button" id="btn-tab-signature">
         🔏 Assinatura Digital
     </button>
-    <button class="tab-btn" onclick="showTab('tab-email', this)" type="button" id="btn-tab-email">
-        ✉ Email (SMTP)
+    <button class="tab-btn" onclick="showTab('tab-repo', this)" type="button" id="btn-tab-repo">
+        📦 Armazenamento
     </button>
 </div>
 
@@ -132,75 +132,6 @@
     <button type="submit" class="primary-btn" id="btn-save-signature">Guardar Assinatura</button>
 </form>
 </div>
-
-<!-- ══════════════════════════════════════════════════
-     TAB 2 — EMAIL / SMTP
-     ══════════════════════════════════════════════════
-<div id="tab-email" class="tab-panel">
-<form action="/admin/settings/email" method="POST">
-
-    <section class="section">
-        <h2>Servidor de Email (SMTP)</h2>
-
-        <div class="security-note">
-            <strong>🔒 Armazenamento seguro</strong>
-            A palavra-passe SMTP é cifrada com AES-256-GCM antes de ser guardada em disco. O texto original nunca é escrito no servidor.
-        </div>
-
-        <div class="form-row">
-            <div class="form-group" style="margin-bottom:0;">
-                <label for="emailHost">Servidor SMTP (host)</label>
-                <input type="text" name="emailHost" id="emailHost"
-                       value="<%= emailSettings.host %>"
-                       placeholder="Ex.: smtp.gmail.com">
-            </div>
-            <div class="form-group" style="margin-bottom:0;">
-                <label for="emailPort">Porto</label>
-                <input type="number" name="emailPort" id="emailPort"
-                       value="<%= emailSettings.port %>"
-                       min="1" max="65535"
-                       placeholder="587">
-                <small>587 (TLS) ou 465 (SSL)</small>
-            </div>
-        </div>
-        <br>
-
-        <div class="form-group">
-            <label for="emailUser">Utilizador / Email de autenticação</label>
-            <input type="email" name="emailUser" id="emailUser"
-                   value="<%= emailSettings.user %>"
-                   placeholder="Ex.: noreply@universidade.pt">
-        </div>
-
-        <div class="form-group">
-            <label for="emailPassword">Palavra-passe SMTP</label>
-            <input type="password" name="emailPassword" id="emailPassword"
-                   autocomplete="new-password"
-                   placeholder="<%= emailSettings.hasPassword
-                       ? '••••••••  (deixe em branco para não alterar)'
-                       : 'Introduza a palavra-passe SMTP' %>">
-            <small>
-                <% if (emailSettings.hasPassword) { %>
-                    A palavra-passe está guardada de forma cifrada. Preencha apenas se quiser alterá-la.
-                <% } else { %>
-                    Obrigatória para o envio de emails.
-                <% } %>
-            </small>
-        </div>
-
-        <div class="form-group">
-            <label for="emailSender">Endereço de remetente (from)</label>
-            <input type="email" name="emailSender" id="emailSender"
-                   value="<%= emailSettings.sender %>"
-                   placeholder="Ex.: Universidade de Lisboa <noreply@universidade.pt>">
-            <small>Pode ser diferente do utilizador de autenticação.</small>
-        </div>
-    </section>
-
-    <button type="submit" class="primary-btn" id="btn-save-email">Guardar Email</button>
-</form>
-</div>
--->
 
 <p style="margin-top:1.5rem;"><a href="/" class="back-link">← Voltar ao Dashboard</a></p>
 

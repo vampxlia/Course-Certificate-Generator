@@ -1,4 +1,4 @@
-import config from './certificate.json';
+import config from './certificateConfigs.json';
 
 // Exporting the variable with an explicit type for safety
 export const MAX_REPOSITORY_SIZE_BYTES: number = config.maxRepositorySizeBytes;

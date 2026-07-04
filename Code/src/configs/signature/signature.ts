@@ -3,7 +3,7 @@ import fs from "fs";
 
 // Ensure we are always reading/writing to the exact same absolute path
 export const P12_CERT_PATH = path.join(__dirname, "signature.p12");
-const JSON_PATH = path.join(__dirname, "signature.json");
+const JSON_PATH = path.join(__dirname, "signatureConfigs.json");
 
 export interface WrittenSignatureSettings {
     enabled: boolean;
@@ -19,7 +19,7 @@ export interface SignatureSettings extends WrittenSignatureSettings {
 }
 
 /**
- * Safely reads the signature.json file at runtime.
+ * Safely reads the signatureConfigs.json file at runtime.
  * Falls back to defaults if the file does not exist yet.
  */
 function readJsonConfig(): WrittenSignatureSettings {
@@ -36,7 +36,7 @@ function readJsonConfig(): WrittenSignatureSettings {
     try {
         return JSON.parse(fs.readFileSync(JSON_PATH, "utf8"));
     } catch (error) {
-        console.error("Error reading signature.json, falling back to defaults:", error);
+        console.error("Error reading signatureConfigs.json, falling back to defaults:", error);
         return { enabled: false, password: "", name: "", contactInfo: "", location: "", reason: "" };
     }
 }
