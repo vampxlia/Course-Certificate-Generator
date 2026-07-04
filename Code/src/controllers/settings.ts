@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import fs from "fs";
 import {getSignatureSettings, P12_CERT_PATH, saveSignatureSettings} from "../configs/signature/signature";
+import {saveCertificateRepositorySettings} from "../configs/certificates/certificateDB";
 
 /** GET /admin/settings */
 export const getSettingsPage = (_req: Request, res: Response) => {
@@ -37,6 +38,49 @@ export const updateSignatureSettings = (req: Request, res: Response) => {
     } catch (error) {
         console.error("Error saving signature settings:", error);
         renderSettings (res, null, "Erro ao guardar as definições de assinatura. Tente novamente.");
+    }
+};
+
+//POST /admin/settings/repo
+export const updateRepositorySettings = (req: Request, res: Response) => {
+    try {
+        const { maxSize, maxSizeUnit, maxUsePercentage } = req.body;
+
+        let maxSizeBites: number | undefined = undefined;
+
+        if (maxSize && maxSize.trim() !== "") {
+            const parsedSize = parseFloat(maxSize);
+
+            if (!isNaN(parsedSize)) {
+                switch (maxSizeUnit) {
+                    case "KB":
+                        maxSizeBites = Math.round(parsedSize * 1024);
+                        break;
+                    case "MB":
+                        maxSizeBites = Math.round(parsedSize * 1024 * 1024);
+                        break;
+                    case "GB":
+                        maxSizeBites = Math.round(parsedSize * 1024 * 1024 * 1024);
+                        break;
+                    case "B":
+                    default:
+                        maxSizeBites = Math.round(parsedSize);
+                        break;
+                }
+            }
+        }
+
+        const percentage = maxUsePercentage ? parseInt(maxUsePercentage, 10) : undefined;
+
+        saveCertificateRepositorySettings({
+            maxSizeBites,
+            maxUsePercentage: isNaN(percentage as number) ? undefined : percentage,
+        });
+
+        renderSettings(res, "Definições de armazenamento local guardadas com sucesso!", null);
+    } catch (error) {
+        console.error("Error saving certificate storage settings:", error);
+        renderSettings(res, null, "Erro ao guardar as definições de armazenamento.");
     }
 };
 

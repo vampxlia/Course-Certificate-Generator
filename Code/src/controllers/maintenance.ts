@@ -10,6 +10,7 @@ import { getFiltersData } from '../services/certificate/certificates';
 import {Certificate} from "../model/certificate";
 import path from "path";
 import {CERTIFICATE_REPOSITORY_DIR} from "../configs/localRepository";
+import {getRepositorySettings} from "../configs/certificates/certificateDB";
 
 
 export const getMaintenancePage = async (req: Request, res: Response) => {
@@ -22,6 +23,7 @@ export const getMaintenancePage = async (req: Request, res: Response) => {
     const { courses } = await getFiltersData();
 
     const currentSizeBytes = await getUsedBytes();
+    const maxSizeBytes = getRepositorySettings().maxSizeBites;
     const usagePercentage = await getUsedPercentageBytes(currentSizeBytes);
 
     res.render('maintenance', {
@@ -30,6 +32,7 @@ export const getMaintenancePage = async (req: Request, res: Response) => {
         sortParam,
         courses,
         selectedCourseId: courseIdQuery,
+        maxSizeBytes,
         currentSizeBytes,
         usagePercentage,
     });

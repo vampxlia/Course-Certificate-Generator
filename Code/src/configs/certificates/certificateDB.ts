@@ -1,5 +1,27 @@
-import config from './certificateConfigs.json';
+import fs from "fs";
+import path from "path";
 
-// Exporting the variable with an explicit type for safety
-export const MAX_REPOSITORY_SIZE_BYTES: number = config.maxRepositorySizeBytes;
-export const REPOSITORY_MAX_USE_PERCENTAGE: number = config.repositoryUsePercentageLimit;
+const CONFIG_PATH = path.join(__dirname, "certificateConfigs.json");
+
+export interface repositorySettings {
+    maxSizeBites: number
+    maxUsePercentage: number
+}
+
+export function getRepositorySettings(): repositorySettings {
+    const config = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf8"));
+    return {
+        maxSizeBites: config.maxSizeBites,
+        maxUsePercentage: config.maxUsePercentage
+    }
+}
+
+export function saveCertificateRepositorySettings(update: Partial<Omit<repositorySettings, number>>) {
+    const config = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf8"));
+    const newSettings: repositorySettings = {
+        maxSizeBites: update.maxSizeBites ?? config.maxSizeBites,
+        maxUsePercentage: update.maxUsePercentage ?? config.maxUsePercentage,
+    };
+
+    fs.writeFileSync(CONFIG_PATH, JSON.stringify(newSettings, null, 2), "utf8");
+}

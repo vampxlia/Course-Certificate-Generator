@@ -1,4 +1,4 @@
 {
-  "maxRepositorySizeBytes": 1073741824,
-  "repositoryUsePercentageLimit": 90
+  "maxSizeBites": 104857600,
+  "maxUsePercentage": 40
 }

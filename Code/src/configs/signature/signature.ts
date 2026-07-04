@@ -1,9 +1,8 @@
 import path from "path";
 import fs from "fs";
 
-// Ensure we are always reading/writing to the exact same absolute path
 export const P12_CERT_PATH = path.join(__dirname, "signature.p12");
-const JSON_PATH = path.join(__dirname, "signatureConfigs.json");
+const CONFIG_PATH = path.join(__dirname, "signatureConfigs.json");
 
 export interface WrittenSignatureSettings {
     enabled: boolean;
@@ -18,35 +17,13 @@ export interface SignatureSettings extends WrittenSignatureSettings {
     hasCertificate: boolean;
 }
 
-/**
- * Safely reads the signatureConfigs.json file at runtime.
- * Falls back to defaults if the file does not exist yet.
- */
-function readJsonConfig(): WrittenSignatureSettings {
-    if (!fs.existsSync(JSON_PATH)) {
-        return {
-            enabled: false,
-            password: "",
-            name: "",
-            contactInfo: "",
-            location: "",
-            reason: "Autenticação de Certificado de Curso",
-        };
-    }
-    try {
-        return JSON.parse(fs.readFileSync(JSON_PATH, "utf8"));
-    } catch (error) {
-        console.error("Error reading signatureConfigs.json, falling back to defaults:", error);
-        return { enabled: false, password: "", name: "", contactInfo: "", location: "", reason: "" };
-    }
-}
+
 
 /**
  * Reads persisted signature settings.
  */
 export function getSignatureSettings(): SignatureSettings {
-    const config = readJsonConfig();
-
+    const config = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf8"));
     return {
         enabled: config.enabled,
         name: config.name,
@@ -62,8 +39,7 @@ export function getSignatureSettings(): SignatureSettings {
  * Saves signature settings.
  */
 export function saveSignatureSettings(update: Partial<Omit<SignatureSettings, "hasCertificate">>): void {
-    const config = readJsonConfig();
-
+    const config = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf8"));
     const newSettings: WrittenSignatureSettings = {
         enabled: update.enabled ?? config.enabled,
         name: update.name ?? config.name,
@@ -74,5 +50,5 @@ export function saveSignatureSettings(update: Partial<Omit<SignatureSettings, "h
         password: update.password !== undefined ? update.password : config.password,
     };
 
-    fs.writeFileSync(JSON_PATH, JSON.stringify(newSettings, null, 2), "utf8");
+    fs.writeFileSync('./signatureConfigs.json', JSON.stringify(newSettings, null, 2), "utf8");
 }

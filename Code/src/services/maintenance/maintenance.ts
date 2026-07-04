@@ -1,6 +1,6 @@
 import {CertificateDAO} from "../../dao/implementations/local/certificateDAO";
 import {Certificate} from "../../model/certificate";
-import {MAX_REPOSITORY_SIZE_BYTES, REPOSITORY_MAX_USE_PERCENTAGE} from "../../configs/certificates/certificateDB";
+import {getRepositorySettings} from "../../configs/certificates/certificateDB";
 
 const dao = new CertificateDAO();
 
@@ -35,7 +35,8 @@ export async function getUsedBytes(){
 }
 
 export async function getUsedPercentageBytes(bytes: number){
-    return Math.min((bytes / MAX_REPOSITORY_SIZE_BYTES) * 100, 100);
+    const maxRepositorySize = getRepositorySettings().maxSizeBites
+    return Math.min((bytes / maxRepositorySize) * 100, 100);
 }
 
 export async function getCertificateByName(name: string): Promise<Certificate[]> {
@@ -92,7 +93,8 @@ export async function getCertificatesBeforeDate(date: string | Date): Promise<Ce
 }
 
 export async function deleteCertificatesUntilThreshold() {
-    while (await getUsedPercentageBytes(await getUsedBytes()) > REPOSITORY_MAX_USE_PERCENTAGE) {
+    const maxUsePercentage = getRepositorySettings().maxUsePercentage;
+    while (await getUsedPercentageBytes(await getUsedBytes()) > maxUsePercentage) {
         const deleted = await dao.deleteOldestCertificate();
         if (!deleted) {
             break;
@@ -102,5 +104,6 @@ export async function deleteCertificatesUntilThreshold() {
 
 export async function willOverflowStorage(estimatedNewBytes: number): Promise<boolean> {
     const currentSize = await dao.getAllCertificatesSize();
-    return (currentSize + estimatedNewBytes) > MAX_REPOSITORY_SIZE_BYTES;
+    const maxRepositorySize = getRepositorySettings().maxSizeBites
+    return (currentSize + estimatedNewBytes) > maxRepositorySize;
 }

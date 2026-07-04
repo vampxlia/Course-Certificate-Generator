@@ -2,7 +2,7 @@ import express from "express";
 import multer from "multer";
 import { authenticate } from "../middlewares/authenticate";
 import { authorize } from "../middlewares/authorize";
-import { getSettingsPage, updateSignatureSettings } from "../controllers/settings";
+import {getSettingsPage, updateRepositorySettings, updateSignatureSettings} from "../controllers/settings";
 
 export const router = express.Router();
 
@@ -23,4 +23,5 @@ const upload = multer({
 
 router.get("/settings",           authenticate, authorize, getSettingsPage);
 router.post("/settings/signature", authenticate, authorize, upload.single("p12file"), updateSignatureSettings);
+router.post("/settings/repo", authenticate, authorize, updateRepositorySettings)
 //router.post("/settings/email",     authenticate, authorize, updateEmailSettings);
