@@ -99,4 +99,24 @@ export class CertificateDAO {
             return !Number.isNaN(num) && num < cutOff;
         });
     }
+
+    async deleteOldestCertificate(): Promise<boolean> {
+        try {
+            const certificates = await this.getAllCertificates();
+
+            // If the repository is empty, there is nothing to delete
+            if (certificates.length === 0) {
+                return false;
+            }
+
+            // Sort certificates by ascending creation date (oldest first)
+            certificates.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+
+            const oldestCertificate = certificates[0];
+            return await this.deleteCertificate(oldestCertificate);
+        } catch (error) {
+            console.error("Error finding or deleting the oldest certificate:", error);
+            return false;
+        }
+    }
 }

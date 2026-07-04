@@ -1,6 +1,6 @@
 import {CertificateDAO} from "../../dao/implementations/local/certificateDAO";
 import {Certificate} from "../../model/certificate";
-import {MAX_REPOSITORY_SIZE_BYTES} from "../../configs/certificates/certificateDB";
+import {MAX_REPOSITORY_SIZE_BYTES, REPOSITORY_MAX_USE_PERCENTAGE} from "../../configs/certificates/certificateDB";
 
 const dao = new CertificateDAO();
 
@@ -89,4 +89,25 @@ export async function getCertificatesBeforeDate(date: string | Date): Promise<Ce
     const cutoff = new Date(date);
     if (isNaN(cutoff.getTime())) return [];
     return dao.getCertificatesBeforeDate(cutoff);
+}
+
+export async function deleteCertificatesUntilThreshold() {
+    while (await getUsedPercentageBytes(await getUsedBytes()) > REPOSITORY_MAX_USE_PERCENTAGE) {
+        const deleted = await dao.deleteOldestCertificate();
+        if (!deleted) {
+            break;
+        }
+    }
+}
+
+export function initStorageMaintenanceTask() {
+    const THIRTY_MINUTES = 30 * 60 * 1000;
+
+    setInterval(async () => {
+        try {
+            await deleteCertificatesUntilThreshold();
+        } catch (error) {
+            console.error('Periodic storage cleanup failed:', error);
+        }
+    }, THIRTY_MINUTES);
 }
