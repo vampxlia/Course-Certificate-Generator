@@ -100,14 +100,7 @@ export async function deleteCertificatesUntilThreshold() {
     }
 }
 
-export function initStorageMaintenanceTask() {
-    const THIRTY_MINUTES = 30 * 60 * 1000;
-
-    setInterval(async () => {
-        try {
-            await deleteCertificatesUntilThreshold();
-        } catch (error) {
-            console.error('Periodic storage cleanup failed:', error);
-        }
-    }, THIRTY_MINUTES);
+export async function willOverflowStorage(estimatedNewBytes: number): Promise<boolean> {
+    const currentSize = await dao.getAllCertificatesSize();
+    return (currentSize + estimatedNewBytes) > MAX_REPOSITORY_SIZE_BYTES;
 }

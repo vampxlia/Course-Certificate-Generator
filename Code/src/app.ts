@@ -7,7 +7,6 @@ dotenv.config({path: path.join(__dirname, '../.env')});
 
 //@ts-ignore, the IDE complains there's no actual routes object since we're importing the whole folder
 import routes from './routes';
-import {initStorageMaintenanceTask} from "./services/maintenance/maintenance";
 const app = express();
 
 app.set('view engine', 'ejs')
@@ -26,6 +25,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`App running on http://localhost:${PORT}`);
 });
-
-//periodically check repository to remove certificates
-initStorageMaintenanceTask()

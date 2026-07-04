@@ -10,10 +10,33 @@ import { plainAddPlaceholder } from "@signpdf/placeholder-plain";
 import { SignPdf } from "@signpdf/signpdf";
 import { P12Signer } from "@signpdf/signer-p12";
 import { getSignatureSettings, P12_CERT_PATH } from "../../configs/signature/signature";
+import {deleteCertificatesUntilThreshold, willOverflowStorage} from "../maintenance/maintenance";
 
 const tempCertificatePath: string = path.join(__dirname, 'template', 'html', 'temp_certificate.html');
 
+
+
+
 export async function generatePdfCertificates(students: Student[], layout: TemplateLayout) {
+
+    try {
+        await deleteCertificatesUntilThreshold();
+    } catch (error) {
+        console.error("[Maintenance] Failed to run threshold cleanup prior to PDF generation:", error);
+    }
+
+    const ESTIMATED_SIZE_PER_CERT = 307200; //certificados nunca ocupam tanto espaço, mas é uma boa estimativa
+    const totalEstimatedBytes = students.length * ESTIMATED_SIZE_PER_CERT;
+
+    if (await willOverflowStorage(totalEstimatedBytes)) {
+        throw new Error(
+            `Generation aborted: This operation requires approximately ` +
+            `${(totalEstimatedBytes / (1024 * 1024)).toFixed(2)} MB, ` +
+            `which exceeds the absolute hardcoded maximum storage capacity.` +
+            `Please contact an administrator to free repository space before proceeding.`
+        );
+    }
+
     // ensures directory exists
     fs.mkdirSync(CERTIFICATE_REPOSITORY_DIR, { recursive: true });
 

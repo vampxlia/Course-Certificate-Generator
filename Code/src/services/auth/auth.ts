@@ -8,8 +8,7 @@ const dao: IUserDAO = new SqlUserDAO()
 export async function validateCredentials(email: string, password: string): Promise<User | null> {
     const hashedPassword = await dao.getPassword(email)
     if (hashedPassword ) {
-        const isMatch = await bcrypt.compare(password, hashedPassword)
-        if (isMatch) {
+        if (await validateHash(password, hashedPassword)) {
             return dao.getUser(email)
         }
     }
@@ -19,4 +18,8 @@ export async function validateCredentials(email: string, password: string): Prom
 export function generateHashedPassword(password: string): string {
     const hash = bcrypt.genSaltSync(10)
     return bcrypt.hashSync(password, hash)
+}
+
+export async function validateHash(password: string, hashedPassword: string): Promise<boolean> {
+    return await bcrypt.compare(password, hashedPassword)
 }

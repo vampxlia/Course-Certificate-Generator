@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import fs from "fs";
-import { getSignatureSettings, saveSignatureSettings, P12_CERT_PATH } from "../configs/signature/signature";
-import { encrypt, decrypt, isEncrypted } from "../services/crypto"
+import {getSignatureSettings, P12_CERT_PATH, saveSignatureSettings} from "../configs/signature/signature";
 
 /** GET /admin/settings */
 export const getSettingsPage = (_req: Request, res: Response) => {
@@ -31,7 +30,7 @@ export const updateSignatureSettings = (req: Request, res: Response) => {
             location: location || "",
             reason: reason || "Autenticação de Certificado de Curso",
             // Only update passphrase if a new non-empty value was provided
-            ...(password ? { password: encrypt(password) } : {}),
+            ...(password ? { password: password } : {}),
         });
 
         renderSettings (res, "Definições de assinatura guardadas com sucesso!", null);
