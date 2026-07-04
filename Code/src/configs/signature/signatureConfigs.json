@@ -1,8 +1,8 @@
 {
   "enabled": false,
   "password" : "",
-  "name": "Sistema de Certificados",
-  "contactInfo": "contacto@example.com",
-  "location": "Location",
-  "reason": "Assinatura Digital"
+  "name": "",
+  "contactInfo": "",
+  "location": "",
+  "reason": ""
 }

@@ -34,7 +34,7 @@
 
     <!-- Enable / Disable -->
     <section class="section">
-        <h2>Estado da Assinatura</h2>
+        <h2>Certificate Signing</h2>
         <div class="toggle-row">
             <label class="switch">
                 <input type="checkbox" name="enabled" id="enabled" <%= signatureSettings.enabled ? 'checked' : '' %>>
@@ -42,42 +42,31 @@
             </label>
             <span class="toggle-label">
                 Assinatura Digital
-                <%= signatureSettings.enabled
-                    ? '<strong style="color:#28a745">Ativa</strong>'
-                    : '<strong style="color:#6c757d">Inativa</strong>' %>
+                <%= signatureSettings.enabled%>
             </span>
         </div>
-        <small style="margin-top:0.75rem;display:block;color:#777;">
-            Quando inativa, os PDFs são gerados normalmente sem assinatura digital.
-        </small>
     </section>
 
     <!-- Certificate (.p12) -->
     <section class="section">
-        <h2>Certificado Digital (.p12)</h2>
-
-        <div class="security-note">
-            <strong>🔒 Armazenamento seguro</strong>
-            A palavra-passe do certificado é cifrada com AES-256-GCM antes de ser guardada em disco. O texto original nunca é escrito no servidor.
-        </div>
-
+        <h2>Digital Signature (.p12)</h2>
         <div class="form-group">
-            <label>Estado atual do certificado:</label>
+            <label>Signature State:</label>
             <% if (signatureSettings.hasCertificate) { %>
-                <span class="status-badge ok">✔ Certificado carregado</span>
+                <span class="status-badge ok">✔ Signature loaded</span>
             <% } else { %>
-                <span class="status-badge nok">✘ Nenhum certificado carregado</span>
+                <span class="status-badge nok">✘ No signature loaded</span>
             <% } %>
         </div>
 
         <div class="form-group">
-            <label for="p12file">Upload de novo certificado (.p12 / .pfx)</label>
+            <label for="p12file">Upload new signature (.p12 / .pfx)</label>
             <input type="file" name="p12file" id="p12file" accept=".p12,.pfx">
-            <small>Carregue um ficheiro para substituir o certificado atual. Deixe em branco para manter o atual.</small>
+            <small>Upload a file to replace the current signature. Leave this field empty to keep the current one.</small>
         </div>
 
         <div class="form-group">
-            <label for="passphrase">Palavra-passe do certificado</label>
+            <label for="passphrase">Signature Password</label>
             <input type="password" name="passphrase" id="passphrase"
                    autocomplete="new-password"
                    placeholder="<%= signatureSettings.hasCertificate
@@ -85,9 +74,9 @@
                        : 'Introduza a palavra-passe' %>">
             <small>
                 <% if (signatureSettings.hasCertificate) { %>
-                    A palavra-passe está guardada de forma cifrada. Preencha apenas se quiser alterá-la.
+                    Password saved. Only fill this field if you want to alter it.
                 <% } else { %>
-                    Obrigatória quando o certificado é carregado pela primeira vez.
+                    Mandatory.
                 <% } %>
             </small>
         </div>
@@ -95,41 +84,41 @@
 
     <!-- Institution Metadata -->
     <section class="section">
-        <h2>Dados da Instituição (Metadados da Assinatura)</h2>
+        <h2>Institution Metadata</h2>
         <p style="color:#666;font-size:0.9rem;margin-top:0;">
-            Estes dados ficam visíveis nos leitores de PDF (ex.: Adobe Acrobat) ao verificar a assinatura.
+            This data is visible on PDF readers when verifying signatures.
         </p>
 
         <div class="form-group">
-            <label for="name">Nome da Instituição</label>
+            <label for="name">Institution Name</label>
             <input type="text" name="name" id="name"
                    value="<%= signatureSettings.name %>"
                    placeholder="Ex.: Universidade de Lisboa">
         </div>
 
         <div class="form-group">
-            <label for="contact">E-mail de Contacto</label>
+            <label for="contact">Contact Email</label>
             <input type="email" name="contact" id="contact"
                    value="<%= signatureSettings.contact %>"
                    placeholder="Ex.: certificados@universidade.pt">
         </div>
 
         <div class="form-group">
-            <label for="location">Localização</label>
+            <label for="location">Location</label>
             <input type="text" name="location" id="location"
                    value="<%= signatureSettings.location %>"
                    placeholder="Ex.: Lisboa, Portugal">
         </div>
 
         <div class="form-group">
-            <label for="reason">Motivo da Assinatura</label>
+            <label for="reason">Reason for Signature</label>
             <input type="text" name="reason" id="reason"
                    value="<%= signatureSettings.reason %>"
-                   placeholder="Ex.: Autenticação de Certificado de Curso">
+                   placeholder="Ex.: Course Certificate Authentication">
         </div>
     </section>
 
-    <button type="submit" class="primary-btn" id="btn-save-signature">Guardar Assinatura</button>
+    <button type="submit" class="primary-btn" id="btn-save-signature">Save Settings</button>
 </form>
 </div>
 
@@ -140,17 +129,17 @@
     <form action="/admin/settings/repo" method="POST">
 
         <section class="section">
-            <h2>Limites do Repositório Local</h2>
+            <h2>Certificate Storage Settings</h2>
             <p style="color:#666;font-size:0.9rem;margin-top:0;">
-                Configure as regras de armazenamento local para a base de dados de certificados emitidos.
+                Configure local storage settings for generated certificates.
             </p>
 
             <div class="form-group">
-                <label for="maxSize">Tamanho Máximo Permitido</label>
+                <label for="maxSize">Max Allowed Size</label>
                 <div style="display: flex; gap: 0.5rem;">
                     <input type="number" name="maxSize" id="maxSize" style="flex: 1;"
                            value="<%= typeof repoSettings !== 'undefined' ? repoSettings.size : '' %>"
-                           placeholder="Ex.: 10. Deixe em branco para manter o atual">
+                           placeholder="Ex.: 10. Leave this field empty to not change it.">
 
                     <select name="maxSizeUnit" id="maxSizeUnit" style="width: 110px; padding: 0.4rem; border-radius: 4px; border: 1px solid #ccc; background: #fff;">
                         <% const currentUnit = typeof repoSettings !== 'undefined' ? repoSettings.unit : 'MB'; %>
@@ -163,10 +152,10 @@
             </div>
 
             <div class="form-group">
-                <label for="maxUsePercentage">Percentagem Máxima de Uso de Disco (%)</label>
+                <label for="maxUsePercentage">Max size usage Percentage (%)</label>
                 <input type="number" name="maxUsePercentage" id="maxUsePercentage" min="1" max="100"
-                       placeholder="Ex.: 90. Deixe em branco para manter o atual">
-                <small>Automáticamente apaga certificados antigos quando o armazenamento atingir esta ocupação.</small>
+                       placeholder="Ex.: 90. Leave this field empty to not change it.">
+                <small>If this threshold is exceeded, older certificates are deleted.</small>
             </div>
         </section>
 
@@ -174,7 +163,7 @@
     </form>
 </div>
 
-<p style="margin-top:1.5rem;"><a href="/" class="back-link">← Voltar ao Dashboard</a></p>
+<p style="margin-top:1.5rem;"><a href="/" class="back-link">← Back to Dashboard</a></p>
 
 <script>
     function showTab(tabId, btn) {
