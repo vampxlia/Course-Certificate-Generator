@@ -9,12 +9,14 @@ export class VariableCourseDAO implements ICourseDAO {
         return Promise.resolve([sampleCourse1, sampleCourse2]);
     }
 
+    // @ts-ignore
     getCourseById(id: number): Course | null{
         if (id === sampleCourse1.id) return sampleCourse1;
         if (id === sampleCourse2.id) return sampleCourse2;
         return null;
     }
 
+    // @ts-ignore
     getCourseByName(name: string): Course | null{
         if (name === sampleCourse1.name) return sampleCourse1;
         if (name === sampleCourse2.name) return sampleCourse2;

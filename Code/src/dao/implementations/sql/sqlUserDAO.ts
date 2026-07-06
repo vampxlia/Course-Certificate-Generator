@@ -1,7 +1,7 @@
 import { IUserDAO } from "../../interfaces/IUserDAO";
 import { User, userRole } from "../../../model/user";
-import { RowDataPacket, ResultSetHeader } from "mysql2/promise";
-import {getAuthDatabasePool} from "../../../configs/authDB";
+import {RowDataPacket, ResultSetHeader, Pool} from "mysql2/promise";
+import {getAuthDbPool} from "../../../configs/db";
 
 interface EmployeeJoinRow extends RowDataPacket {
     EmployeeID: number;
@@ -13,6 +13,7 @@ interface EmployeeJoinRow extends RowDataPacket {
 }
 
 export class SqlUserDAO implements IUserDAO {
+    private db: Pool = getAuthDbPool();
 
     async getUser(email: string): Promise<User | null> {
         const query = `
@@ -29,7 +30,7 @@ export class SqlUserDAO implements IUserDAO {
         `;
 
         try {
-            const [rows] = await getAuthDatabasePool().execute<EmployeeJoinRow[]>(query, [email.trim()]);
+            const [rows] = await this.db.execute<EmployeeJoinRow[]>(query, [email.trim()]);
 
             if (rows.length === 0) {
                 return null;
@@ -56,7 +57,7 @@ export class SqlUserDAO implements IUserDAO {
         `;
 
         try {
-            const [rows] = await getAuthDatabasePool().execute<EmployeeJoinRow[]>(query, [email.trim()]);
+            const [rows] = await this.db.execute<EmployeeJoinRow[]>(query, [email.trim()]);
 
             if (rows.length === 0) {
                 return null;
@@ -84,7 +85,7 @@ export class SqlUserDAO implements IUserDAO {
         `;
 
         try {
-            const [rows] = await getAuthDatabasePool().execute<EmployeeJoinRow[]>(query);
+            const [rows] = await this.db.execute<EmployeeJoinRow[]>(query);
             return rows.map(row => {
                 const fullName = `${row.FirstName} ${row.LastName}`;
                 const email = Buffer.isBuffer(row.Email) ? row.Email.toString('utf8') : String(row.Email);
@@ -112,7 +113,7 @@ export class SqlUserDAO implements IUserDAO {
         `;
 
         try {
-            const [rows] = await getAuthDatabasePool().execute<EmployeeJoinRow[]>(query, [id]);
+            const [rows] = await this.db.execute<EmployeeJoinRow[]>(query, [id]);
 
             if (rows.length === 0) return null;
 
@@ -129,7 +130,7 @@ export class SqlUserDAO implements IUserDAO {
     }
 
     async createUser(firstName: string, lastName: string, email: string, hashedPassword: string, role: userRole): Promise<void> {
-        const conn = await getAuthDatabasePool().getConnection();
+        const conn = await this.db.getConnection();
         try {
             await conn.beginTransaction();
 
@@ -156,7 +157,7 @@ export class SqlUserDAO implements IUserDAO {
     }
 
     async updateUser(id: number, firstName: string, lastName: string, email: string, role: userRole, hashedPassword?: string): Promise<void> {
-        const conn = await getAuthDatabasePool().getConnection();
+        const conn = await this.db.getConnection();
         try {
             await conn.beginTransaction();
 
@@ -188,7 +189,7 @@ export class SqlUserDAO implements IUserDAO {
     }
 
     async deleteUser(id: number): Promise<void> {
-        const conn = await getAuthDatabasePool().getConnection();
+        const conn = await this.db.getConnection();
         try {
             await conn.beginTransaction();
 

@@ -3,24 +3,20 @@ import { generatePdfCertificates } from './generator';
 import { sendUserCertificateEmail } from './sendEmail';
 import {ICourseDAO} from "../../dao/interfaces/ICourseDAO";
 import {IStudentDAO} from "../../dao/interfaces/IStudentDAO";
-import {VariableStudentDAO} from "../../dao/implementations/variableUnsafe/variableStudentDAO";
-import {VariableCourseDAO} from "../../dao/implementations/variableUnsafe/variableCourseDAO";
 import {TemplateDAO} from "../../dao/implementations/local/templateDAO";
 import {CertificateDAO} from "../../dao/implementations/local/certificateDAO";
 import {Student} from "../../model/student";
+import {sqlCourseDAO} from "../../dao/implementations/sql/sqlCourseDAO";
+import {sqlStudentDAO} from "../../dao/implementations/sql/sqlStudentDAO";
 
-const studentDao: IStudentDAO = new VariableStudentDAO();
-const courseDao: ICourseDAO = new VariableCourseDAO();
+const studentDao: IStudentDAO = new sqlStudentDAO();
+const courseDao: ICourseDAO = new sqlCourseDAO();
 const templateDao = new TemplateDAO();
 const certificateDao = new CertificateDAO();
 
 export async function getFiltersData() {
     const courses = await courseDao.getAllCourses();
     return { courses };
-}
-
-export async function getStudentsForGeneration(courseId?: number, year?: number) {
-    return await studentDao.getEligibleStudents({ courseId, year });
 }
 
 /**
