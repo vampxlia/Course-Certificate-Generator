@@ -12,7 +12,7 @@ const dao = new CertificateDAO();
 function createTransporter() {
     if (!settings.EMAIL_HOST || !settings.EMAIL_USER || !settings.EMAIL_PASSWORD) {
         throw new Error(
-            "Email não configurado. Aceda a Definições → Email para inserir as credenciais SMTP."
+            "Email não configurado."
         );
     }
 

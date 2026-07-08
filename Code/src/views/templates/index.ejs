@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Templates</title>
@@ -11,12 +11,12 @@
 
 <p><a href="/">Back to Dashboard</a></p>
 
-<div class="actions" style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+<div class="template-actions-bar">
     <form action="/templates" method="GET" class="form-inline">
-        <input type="text" name="search" placeholder="Search by name or ID" value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>" style="min-width: 250px;">
+        <input type="text" name="search" placeholder="Search by name or ID" value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>" class="search-input">
         <button type="submit" class="primary-btn">Search</button>
         <% if (typeof searchQuery !== 'undefined' && searchQuery) { %>
-            <a href="/templates" style="margin-left: 10px;">Clear</a>
+            <a href="/templates" class="search-clear">Clear</a>
         <% } %>
     </form>
 
@@ -59,7 +59,7 @@
                 <form
                     action="/templates/delete"
                     method="POST"
-                    style="display:inline;"
+                    class="form-inline-delete"
                 >
                     <input
                         type="hidden"

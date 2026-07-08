@@ -1,13 +1,107 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Preview Template</title>
     <link rel="stylesheet" href="/css/main.css">
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .canvas-wrapper {
+            position: relative;
+            width: 1525px; /* 1485 + 40 */
+            height: 1090px; /* 1050 + 40 */
+            transform-origin: center center;
+            flex-shrink: 0;
+        }
+        .ruler {
+            position: absolute;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            overflow: hidden;
+            font-size: 16px;
+            font-weight: bold;
+            color: #555;
+            font-family: monospace;
+        }
+        .ruler-horizontal {
+            left: 40px;
+            top: 0;
+            width: 1485px;
+            height: 40px;
+            border-bottom: none;
+        }
+        .ruler-vertical {
+            left: 0;
+            top: 40px;
+            width: 40px;
+            height: 1050px;
+            border-right: none;
+        }
+        .ruler-corner {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 40px;
+            height: 40px;
+            background-color: #e0e0e0;
+            border: 1px solid #ccc;
+            border-bottom: none;
+            border-right: none;
+            box-sizing: border-box;
+        }
+        .tick-h {
+            position: absolute;
+            bottom: 0;
+            width: 2px;
+            background-color: #999;
+            height: 8px;
+        }
+        .tick-h.major {
+            height: 15px;
+            background-color: #444;
+        }
+        .tick-h span {
+            position: absolute;
+            bottom: 18px;
+            left: -25px;
+            width: 50px;
+            text-align: center;
+        }
+        .tick-v {
+            position: absolute;
+            right: 0;
+            height: 2px;
+            background-color: #999;
+            width: 8px;
+        }
+        .tick-v.major {
+            width: 15px;
+            background-color: #444;
+        }
+        .tick-v span {
+            position: absolute;
+            right: 18px;
+            top: -12px;
+            width: 50px;
+            text-align: right;
+            transform: rotate(-90deg);
+            transform-origin: right center;
+        }
         .certificate-canvas {
+            position: absolute;
+            left: 40px;
+            top: 40px;
             background-color: <%= layout.page.backgroundColor %>;
             border: <%= layout.page.borderWidth %>px solid <%= layout.page.borderColor %>;
+            width: 1485px;
+            height: 1050px;
+            box-sizing: border-box;
+            overflow: hidden;
         }
         .signature-box {
             border-top: 2px solid <%= layout.page.borderColor %>;
@@ -16,38 +110,77 @@
 </head>
 <body class="certificate-canvas-container">
 
-<div class="certificate-canvas">
-    <% elements.forEach(element => { %>
-        <% if (element.isImage) { %>
-            <div class="template-element image-element" style="<%= element.style %>">
-                <img src="<%= element.content %>" style="width: 100%; height: 100%; object-fit: contain;" />
-            </div>
-        <% } else if (element.isSignature) { %>
-            <div class="template-element signature-box" style="<%= element.style %>">
-                <%= element.content %>
-            </div>
-        <% } else { %>
-            <div class="template-element <%= element.isCentered ? 'template-element-centered' : '' %>" style="<%= element.style %>">
-                <%= element.content %>
-            </div>
-        <% } %>
-    <% }) %>
+<div class="canvas-wrapper">
+    <div class="ruler-corner"></div>
+    <div class="ruler ruler-horizontal" id="ruler-h"></div>
+    <div class="ruler ruler-vertical" id="ruler-v"></div>
+    
+    <div class="certificate-canvas">
+        <% elements.forEach(element => { %>
+            <% if (element.isImage) { %>
+                <div class="template-element image-element" style="<%= element.style %>">
+                    <img src="<%= element.content %>" style="width: 100%; height: 100%; object-fit: contain;" />
+                </div>
+            <% } else if (element.isSignature) { %>
+                <div class="template-element signature-box" style="<%= element.style %>">
+                    <%= element.content %>
+                </div>
+            <% } else { %>
+                <div class="template-element <%= element.isCentered ? 'template-element-centered' : '' %>" style="<%= element.style %>">
+                    <%= element.content %>
+                </div>
+            <% } %>
+        <% }) %>
+    </div>
 </div>
 
 <script>
+    function generateRulers() {
+        const rulerH = document.getElementById('ruler-h');
+        const rulerV = document.getElementById('ruler-v');
+        
+        for(let i=0; i<=1485; i+=100) {
+            const isMajor = i % 200 === 0;
+            const tick = document.createElement('div');
+            tick.className = 'tick-h' + (isMajor ? ' major' : '');
+            tick.style.left = i + 'px';
+            if(isMajor) {
+                const label = document.createElement('span');
+                label.innerText = i;
+                tick.appendChild(label);
+            }
+            rulerH.appendChild(tick);
+        }
+
+        for(let i=0; i<=1050; i+=100) {
+            const isMajor = i % 200 === 0;
+            const tick = document.createElement('div');
+            tick.className = 'tick-v' + (isMajor ? ' major' : '');
+            tick.style.top = i + 'px';
+            if(isMajor) {
+                const label = document.createElement('span');
+                label.innerText = i;
+                tick.appendChild(label);
+            }
+            rulerV.appendChild(tick);
+        }
+    }
+    
     function adjustScale() {
-        const canvas = document.querySelector('.certificate-canvas');
+        const wrapper = document.querySelector('.canvas-wrapper');
         const containerWidth = window.innerWidth;
         const containerHeight = window.innerHeight;
-        const canvasWidth = 1485;
-        const canvasHeight = 1050;
+        const wrapperWidth = 1525; // 1485 + 40
+        const wrapperHeight = 1090; // 1050 + 40
 
-        const scaleX = containerWidth / canvasWidth;
-        const scaleY = containerHeight / canvasHeight;
+        const scaleX = containerWidth / wrapperWidth;
+        const scaleY = containerHeight / wrapperHeight;
         const scale = Math.min(scaleX, scaleY) * 0.95; // scale to fit with margin
 
-        canvas.style.transform = `scale(${scale})`;
+        wrapper.style.transform = `scale(${scale})`;
     }
+    
+    generateRulers();
     window.addEventListener('resize', adjustScale);
     window.addEventListener('load', adjustScale);
 </script>

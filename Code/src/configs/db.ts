@@ -12,32 +12,33 @@ export const getAuthDbPool = (): mysql.Pool => {
     // The pool is only instantiated the first time this function is called
     if (!authPoolInstance) {
         authPoolInstance = mysql.createPool({
-            host: process.env.DB_HOST,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_NAME,
+            host: process.env.DB_HOST || '127.0.0.1',
+            port: Number(process.env.DB_PORT || 3306),
+            user: process.env.DB_USER || 'root',
+            password: process.env.DB_PASSWORD || 'password',
+            database: process.env.DB_NAME || 'sistemaacademico',
             waitForConnections: true,
             connectionLimit: 10,
             queueLimit: 0
         });
     }
-    console.log(process.env.DB_NAME);
+    console.log(process.env.DB_NAME || 'sistemaacademico');
     return authPoolInstance;
 };
 
 export const getInstitutionDbPool = (): mysql.Pool => {
     if (!uniPoolInstance) {
         uniPoolInstance = mysql.createPool({
-            host: "localhost",
-            user: "admin",
-            password: "password123",
-            database: "sistemaacademico",
-            port: 3306,
+            host: process.env.DB_HOST || '127.0.0.1',
+            port: Number(process.env.DB_PORT || 3306),
+            user: process.env.DB_USER || 'root',
+            password: process.env.DB_PASSWORD || 'password',
+            database: process.env.DB_NAME || 'sistemaacademico',
             waitForConnections: true,
             connectionLimit: 10,
             queueLimit: 0
         });
     }
-    console.log(process.env.DB_NAME);
+    console.log(process.env.DB_NAME || 'sistemaacademico');
     return uniPoolInstance;
 }

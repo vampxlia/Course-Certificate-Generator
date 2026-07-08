@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Definições do Sistema – Admin</title>
+    <title>System Settings – Admin</title>
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-<h1>Definições do Sistema</h1>
+<h1>System Settings</h1>
 
 <% if (successMessage) { %>
     <p class="success"><%= successMessage %></p>
@@ -19,10 +19,10 @@
 <!-- Tab navigation -->
 <div class="section-tabs">
     <button class="tab-btn active" onclick="showTab('tab-signature', this)" type="button" id="btn-tab-signature">
-        🔏 Assinatura Digital
+        Digital Signature
     </button>
     <button class="tab-btn" onclick="showTab('tab-repo', this)" type="button" id="btn-tab-repo">
-        📦 Armazenamento
+        Storage
     </button>
 </div>
 
@@ -41,7 +41,7 @@
                 <span class="slider"></span>
             </label>
             <span class="toggle-label">
-                Assinatura Digital
+                Digital Signature
                 <%= signatureSettings.enabled%>
             </span>
         </div>
@@ -53,9 +53,9 @@
         <div class="form-group">
             <label>Signature State:</label>
             <% if (signatureSettings.hasCertificate) { %>
-                <span class="status-badge ok">✔ Signature loaded</span>
+                <span class="status-badge ok">Signature loaded</span>
             <% } else { %>
-                <span class="status-badge nok">✘ No signature loaded</span>
+                <span class="status-badge nok">No signature loaded</span>
             <% } %>
         </div>
 
@@ -70,8 +70,8 @@
             <input type="password" name="passphrase" id="passphrase"
                    autocomplete="new-password"
                    placeholder="<%= signatureSettings.hasCertificate
-                       ? '••••••••  (deixe em branco para não alterar)'
-                       : 'Introduza a palavra-passe' %>">
+                       ? '••••••••  (leave blank to keep current)'
+                       : 'Enter the password' %>">
             <small>
                 <% if (signatureSettings.hasCertificate) { %>
                     Password saved. Only fill this field if you want to alter it.
@@ -85,7 +85,7 @@
     <!-- Institution Metadata -->
     <section class="section">
         <h2>Institution Metadata</h2>
-        <p style="color:#666;font-size:0.9rem;margin-top:0;">
+        <p class="section-subtitle">
             This data is visible on PDF readers when verifying signatures.
         </p>
 
@@ -130,18 +130,18 @@
 
         <section class="section">
             <h2>Certificate Storage Settings</h2>
-            <p style="color:#666;font-size:0.9rem;margin-top:0;">
+            <p class="section-subtitle">
                 Configure local storage settings for generated certificates.
             </p>
 
             <div class="form-group">
                 <label for="maxSize">Max Allowed Size</label>
-                <div style="display: flex; gap: 0.5rem;">
-                    <input type="number" name="maxSize" id="maxSize" style="flex: 1;"
+                <div class="size-input-row">
+                    <input type="number" name="maxSize" id="maxSize"
                            value="<%= typeof repoSettings !== 'undefined' ? repoSettings.size : '' %>"
                            placeholder="Ex.: 10. Leave this field empty to not change it.">
 
-                    <select name="maxSizeUnit" id="maxSizeUnit" style="width: 110px; padding: 0.4rem; border-radius: 4px; border: 1px solid #ccc; background: #fff;">
+                    <select name="maxSizeUnit" id="maxSizeUnit" class="size-unit-select">
                         <% const currentUnit = typeof repoSettings !== 'undefined' ? repoSettings.unit : 'MB'; %>
                         <option value="B" <%= currentUnit === 'B' ? 'selected' : '' %>>Bytes</option>
                         <option value="KB" <%= currentUnit === 'KB' ? 'selected' : '' %>>KB</option>
@@ -159,11 +159,11 @@
             </div>
         </section>
 
-        <button type="submit" class="primary-btn" id="btn-save-repo">Guardar Armazenamento</button>
+        <button type="submit" class="primary-btn" id="btn-save-repo">Save Storage Settings</button>
     </form>
 </div>
 
-<p style="margin-top:1.5rem;"><a href="/" class="back-link">← Back to Dashboard</a></p>
+<p class="settings-back-link"><a href="/" class="back-link">← Back to Dashboard</a></p>
 
 <script>
     function showTab(tabId, btn) {

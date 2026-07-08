@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Edit Template</title>
@@ -24,7 +24,7 @@
         </div>
         <div class="field-group">
             <label>Course</label>
-            <select name="courseId" id="courseId" required style="min-width:200px;">
+            <select name="courseId" id="courseId" required class="course-select">
                 <option value="">-- Select a course --</option>
                 <% (courses || []).forEach(function(course) { %>
                     <option value="<%= course.id %>" <%= template.courseId === course.id ? 'selected' : '' %>><%= course.name %></option>
@@ -49,17 +49,17 @@
         <h2>Title</h2>
         <div class="field-group">
             <label>Text</label>
-            <input type="text" name="titleText" value="<%= elements.title.content || '' %>">
+            <input type="text" name="titleText" value="<%= elements.title.content || '' %>" placeholder="Certificate">
         </div>
         <div class="field-group">
             <label>X</label>
-            <input type="number" name="titleX" value="<%= elements.title.x %>">
+            <input type="number" name="titleX" value="<%= elements.title.x !== undefined ? elements.title.x : '' %>" placeholder="700">
             <label>Y</label>
-            <input type="number" name="titleY" value="<%= elements.title.y %>">
+            <input type="number" name="titleY" value="<%= elements.title.y !== undefined ? elements.title.y : '' %>" placeholder="100">
             <label>Font Size</label>
-            <input type="number" name="titleFontSize" value="<%= elements.title.fontSize || 60 %>">
+            <input type="number" name="titleFontSize" value="<%= elements.title.fontSize !== undefined ? elements.title.fontSize : '' %>" placeholder="60">
             <label>Font</label>
-            <input type="text" name="titleFontFamily" value="<%= elements.title.fontFamily || 'Impact' %>">
+            <input type="text" name="titleFontFamily" value="<%= elements.title.fontFamily || '' %>" placeholder="Impact">
             <label>Color</label>
             <input type="color" name="titleColor" value="<%= elements.title.color || '#2655b5' %>">
         </div>
@@ -69,17 +69,17 @@
         <h2>Intro Text</h2>
         <div class="field-group">
             <label>Text</label>
-            <input type="text" name="introText" value="<%= elements.intro.content || 'Certifica-se que' %>">
+            <input type="text" name="introText" value="<%= elements.intro.content || '' %>" placeholder="It is hereby certified that">
         </div>
         <div class="field-group">
             <label>X</label>
-            <input type="number" name="introX" value="<%= elements.intro.x %>">
+            <input type="number" name="introX" value="<%= elements.intro.x !== undefined ? elements.intro.x : '' %>" placeholder="700">
             <label>Y</label>
-            <input type="number" name="introY" value="<%= elements.intro.y %>">
+            <input type="number" name="introY" value="<%= elements.intro.y !== undefined ? elements.intro.y : '' %>" placeholder="250">
             <label>Font Size</label>
-            <input type="number" name="introFontSize" value="<%= elements.intro.fontSize || 30 %>">
+            <input type="number" name="introFontSize" value="<%= elements.intro.fontSize !== undefined ? elements.intro.fontSize : '' %>" placeholder="30">
             <label>Font</label>
-            <input type="text" name="introFontFamily" value="<%= elements.intro.fontFamily || 'Haettenschweiler' %>">
+            <input type="text" name="introFontFamily" value="<%= elements.intro.fontFamily || '' %>" placeholder="Haettenschweiler">
             <label>Color</label>
             <input type="color" name="introColor" value="<%= elements.intro.color || '#2655b5' %>">
         </div>
@@ -89,13 +89,13 @@
         <h2>Student Name</h2>
         <div class="field-group">
             <label>X</label>
-            <input type="number" name="studentNameX" value="<%= elements.studentName.x %>">
+            <input type="number" name="studentNameX" value="<%= elements.studentName.x !== undefined ? elements.studentName.x : '' %>" placeholder="700">
             <label>Y</label>
-            <input type="number" name="studentNameY" value="<%= elements.studentName.y %>">
+            <input type="number" name="studentNameY" value="<%= elements.studentName.y !== undefined ? elements.studentName.y : '' %>" placeholder="330">
             <label>Font Size</label>
-            <input type="number" name="studentNameFontSize" value="<%= elements.studentName.fontSize || 30 %>">
+            <input type="number" name="studentNameFontSize" value="<%= elements.studentName.fontSize !== undefined ? elements.studentName.fontSize : '' %>" placeholder="30">
             <label>Font</label>
-            <input type="text" name="studentNameFontFamily" value="<%= elements.studentName.fontFamily || 'Arial Narrow Bold' %>">
+            <input type="text" name="studentNameFontFamily" value="<%= elements.studentName.fontFamily || '' %>" placeholder="Arial Narrow Bold">
             <label>Color</label>
             <input type="color" name="studentNameColor" value="<%= elements.studentName.color || '#2655b5' %>">
         </div>
@@ -109,17 +109,18 @@
         <textarea
             name="mainText"
             rows="4"
-            style="width: 100%;"
+            class="textarea-full"
+            placeholder="student with ID: {{id}} completed the course {{curso}}. The course started on {{data_inicio}} and ended on {{data_fim}}."
         ><%= elements.mainText.content || '' %></textarea>
-        <div class="field-group" style="margin-top: 0.5rem;">
+        <div class="field-group field-group-mt">
             <label>X</label>
-            <input type="number" name="mainTextX" value="<%= elements.mainText.x %>">
+            <input type="number" name="mainTextX" value="<%= elements.mainText.x !== undefined ? elements.mainText.x : '' %>" placeholder="700">
             <label>Y</label>
-            <input type="number" name="mainTextY" value="<%= elements.mainText.y %>">
+            <input type="number" name="mainTextY" value="<%= elements.mainText.y !== undefined ? elements.mainText.y : '' %>" placeholder="450">
             <label>Font Size</label>
-            <input type="number" name="mainTextFontSize" value="<%= elements.mainText.fontSize || 20 %>">
+            <input type="number" name="mainTextFontSize" value="<%= elements.mainText.fontSize !== undefined ? elements.mainText.fontSize : '' %>" placeholder="20">
             <label>Font</label>
-            <input type="text" name="mainTextFontFamily" value="<%= elements.mainText.fontFamily || 'Arial Narrow Bold' %>">
+            <input type="text" name="mainTextFontFamily" value="<%= elements.mainText.fontFamily || '' %>" placeholder="Arial Narrow Bold">
             <label>Color</label>
             <input type="color" name="mainTextColor" value="<%= elements.mainText.color || '#2655b5' %>">
         </div>
@@ -129,17 +130,17 @@
         <h2>Congratulations</h2>
         <div class="field-group">
             <label>Text</label>
-            <input type="text" name="congratulationsText" value="<%= elements.congratulations.content || '' %>">
+            <input type="text" name="congratulationsText" value="<%= elements.congratulations.content || '' %>" placeholder="Congratulations!">
         </div>
         <div class="field-group">
             <label>X</label>
-            <input type="number" name="congratulationsX" value="<%= elements.congratulations.x %>">
+            <input type="number" name="congratulationsX" value="<%= elements.congratulations.x !== undefined ? elements.congratulations.x : '' %>" placeholder="700">
             <label>Y</label>
-            <input type="number" name="congratulationsY" value="<%= elements.congratulations.y %>">
+            <input type="number" name="congratulationsY" value="<%= elements.congratulations.y !== undefined ? elements.congratulations.y : '' %>" placeholder="650">
             <label>Font Size</label>
-            <input type="number" name="congratulationsFontSize" value="<%= elements.congratulations.fontSize || 50 %>">
+            <input type="number" name="congratulationsFontSize" value="<%= elements.congratulations.fontSize !== undefined ? elements.congratulations.fontSize : '' %>" placeholder="50">
             <label>Font</label>
-            <input type="text" name="congratulationsFontFamily" value="<%= elements.congratulations.fontFamily || 'Haettenschweiler' %>">
+            <input type="text" name="congratulationsFontFamily" value="<%= elements.congratulations.fontFamily || '' %>" placeholder="Haettenschweiler">
             <label>Color</label>
             <input type="color" name="congratulationsColor" value="<%= elements.congratulations.color || '#2655b5' %>">
         </div>
@@ -149,17 +150,17 @@
         <h2>Signature</h2>
         <div class="field-group">
             <label>Text</label>
-            <input type="text" name="signatureText" value="<%= elements.signature.content || '' %>">
+            <input type="text" name="signatureText" value="<%= elements.signature.content || '' %>" placeholder="Responsible Party Signature">
         </div>
         <div class="field-group">
             <label>X</label>
-            <input type="number" name="signatureX" value="<%= elements.signature.x %>">
+            <input type="number" name="signatureX" value="<%= elements.signature.x !== undefined ? elements.signature.x : '' %>" placeholder="1200">
             <label>Y</label>
-            <input type="number" name="signatureY" value="<%= elements.signature.y %>">
+            <input type="number" name="signatureY" value="<%= elements.signature.y !== undefined ? elements.signature.y : '' %>" placeholder="900">
             <label>Font Size</label>
-            <input type="number" name="signatureFontSize" value="<%= elements.signature.fontSize || 30 %>">
+            <input type="number" name="signatureFontSize" value="<%= elements.signature.fontSize !== undefined ? elements.signature.fontSize : '' %>" placeholder="30">
             <label>Font</label>
-            <input type="text" name="signatureFontFamily" value="<%= elements.signature.fontFamily || 'Arial Narrow Bold' %>">
+            <input type="text" name="signatureFontFamily" value="<%= elements.signature.fontFamily || '' %>" placeholder="Arial Narrow Bold">
             <label>Color</label>
             <input type="color" name="signatureColor" value="<%= elements.signature.color || '#2655b5' %>">
         </div>
@@ -170,7 +171,7 @@
         <div id="imagesContainer">
             <!-- Dynamic images will be rendered here -->
         </div>
-        <button type="button" class="primary-btn" id="addImageBtn" style="margin-top: 8px;">
+        <button type="button" class="primary-btn btn-margin-top" id="addImageBtn">
             Add Image
         </button>
         <input type="hidden" name="imagesJson" id="imagesJson" value="">
@@ -179,7 +180,7 @@
     <button type="submit" class="success-btn">
         Save Changes
     </button>
-    <button type="button" class="primary-btn" id="previewBtn" style="margin-left: 8px;">
+    <button type="button" class="primary-btn btn-margin-left" id="previewBtn">
         Preview
     </button>
 
@@ -209,42 +210,33 @@
         imagesContainer.innerHTML = '';
         images.forEach((image, index) => {
             const div = document.createElement('div');
-            div.className = 'field-group';
-            div.style.border = '1px solid #ddd';
-            div.style.padding = '10px';
-            div.style.marginBottom = '10px';
-            div.style.borderRadius = '4px';
-            div.style.display = 'flex';
-            div.style.flexDirection = 'column';
-            div.style.gap = '8px';
-            div.style.width = '100%';
-            div.style.boxSizing = 'border-box';
+            div.className = 'field-group image-card';
 
             div.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 8px; justify-content: space-between;">
+                <div class="image-card-header">
                     <strong>Image #${index + 1}</strong>
-                    <button type="button" class="danger-btn" style="padding: 2px 8px; font-size: 12px;">Remove</button>
+                    <button type="button" class="danger-btn image-card-remove">Remove</button>
                 </div>
-                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                    <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 4px;">
-                        <label style="font-size: 12px; font-weight: bold; min-width: auto;">Image Source (URL or Upload File below)</label>
-                        <input type="text" class="image-src" value="${image.src || ''}" style="width: 95%;" placeholder="http://example.com/logo.png">
-                        <input type="file" class="image-file" accept="image/*" style="margin-top: 4px;">
+                <div class="image-card-body">
+                    <div class="image-card-src-col">
+                        <label class="image-card-src-label">Image Source (URL or Upload File below)</label>
+                        <input type="text" class="image-src image-card-src-input" value="${image.src || ''}" placeholder="http://example.com/logo.png">
+                        <input type="file" class="image-file image-card-file" accept="image/*">
                     </div>
-                    <div style="width: 60px; height: 60px; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; background: #f9f9f9; overflow: hidden; border-radius: 4px; flex-shrink: 0;">
+                    <div class="image-card-thumb">
                         <img src="${image.src || ''}" class="image-preview" style="max-width: 100%; max-height: 100%; display: ${image.src ? 'block' : 'none'};">
-                        <span class="image-placeholder" style="font-size: 9px; color: #999; display: ${image.src ? 'none' : 'block'};">No Image</span>
+                        <span class="image-placeholder image-card-placeholder" style="display: ${image.src ? 'none' : 'block'};">No Image</span>
                     </div>
                 </div>
-                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                    <label style="min-width: auto;">X:</label>
-                    <input type="number" class="image-x" value="${image.x || 100}" style="width: 70px;">
-                    <label style="min-width: auto;">Y:</label>
-                    <input type="number" class="image-y" value="${image.y || 100}" style="width: 70px;">
-                    <label style="min-width: auto;">Width:</label>
-                    <input type="number" class="image-width" value="${image.width || 150}" style="width: 70px;">
-                    <label style="min-width: auto;">Height:</label>
-                    <input type="number" class="image-height" value="${image.height || 150}" style="width: 70px;">
+                <div class="image-card-coords">
+                    <label class="image-coord-label">X:</label>
+                    <input type="number" class="image-x image-coord-input" value="${image.x || 100}">
+                    <label class="image-coord-label">Y:</label>
+                    <input type="number" class="image-y image-coord-input" value="${image.y || 100}">
+                    <label class="image-coord-label">Width:</label>
+                    <input type="number" class="image-width image-coord-input" value="${image.width || 150}">
+                    <label class="image-coord-label">Height:</label>
+                    <input type="number" class="image-height image-coord-input" value="${image.height || 150}">
                 </div>
             `;
 

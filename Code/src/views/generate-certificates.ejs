@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Generate Certificates</title>
@@ -48,17 +48,17 @@
     </div>
 
     <form method="POST">
-        <div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-            <label style="font-weight: 600;">Select Template (For Generation):</label>
-            <select name="templateId" style="min-width: 250px;">
+        <div class="template-select-bar">
+            <label class="template-select-label">Select Template (For Generation):</label>
+            <select name="templateId" class="template-select">
                 <option value="">-- Choose a template --</option>
                 <% templates.forEach(tpl => { %>
                     <option value="<%= tpl.id %>"><%= tpl.name %> (ID: <%= tpl.id %>)</option>
                 <% }) %>
             </select>
             <% if (templates.length === 0) { %>
-                <span style="color: red; font-size: 0.9rem; font-weight: bold;">
-                    No templates found. Please <a href="/templates/create" style="text-decoration: underline; color: red;">Create a template first</a>.
+                <span class="template-missing-warning">
+                    No templates found. Please <a href="/templates/create" class="template-missing-link">Create a template first</a>.
                 </span>
             <% } %>
         </div>
@@ -86,9 +86,9 @@
                     <td><%= student.course.name %></td>
                     <td>
                         <% if (student.hasPdf) { %>
-                            <span class="badge success-badge">✅ PDF Ready</span>
+                            <span class="badge success-badge">PDF Ready</span>
                         <% } else { %>
-                            <span class="badge secondary-badge">⚪ Not Generated</span>
+                            <span class="badge secondary-badge">Not Generated</span>
                         <% } %>
                     </td>
                 </tr>
@@ -102,20 +102,73 @@
                     Generate Selected Certificates
                 </button>
                 <button type="submit" class="primary-btn" formaction="/certificates/email" id="emailBtn">
-                    ✉️ Email Selected Students
+                    Email Selected Students
                 </button>
             </div>
         <% } %>
     </form>
+
+    <% if (students.length > 0) { %>
+    <div class="pagination-controls">
+        <button id="prevBtn" onclick="changePage(-1)" class="schedule-btn">← Previous</button>
+        <span id="page-info" class="pagination-info"></span>
+        <button id="nextBtn" onclick="changePage(1)" class="schedule-btn">Next →</button>
+        <span id="count-info" class="pagination-count"></span>
+    </div>
+    <% } %>
+
 </div>
 <script>
     (function(){
+        const PAGE_SIZE = 15;
+        let currentPage = 1;
+
+        // Tag all data rows first
+        document.querySelectorAll('tbody tr').forEach((row, i) => row.setAttribute('data-row', i));
+
+        const allRows = Array.from(document.querySelectorAll('tbody tr[data-row]'));
+        const totalRows = allRows.length;
+        const totalPages = Math.ceil(totalRows / PAGE_SIZE);
+
+        function renderPage(page) {
+            currentPage = Math.max(1, Math.min(page, totalPages));
+            const start = (currentPage - 1) * PAGE_SIZE;
+            const end = start + PAGE_SIZE;
+
+            allRows.forEach((row, i) => {
+                row.style.display = (i >= start && i < end) ? '' : 'none';
+            });
+
+            const pageInfo = document.getElementById('page-info');
+            const countInfo = document.getElementById('count-info');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (pageInfo) pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            if (countInfo) countInfo.textContent = `(${totalRows} students total)`;
+            if (prevBtn) prevBtn.disabled = currentPage === 1;
+            if (nextBtn) nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+        }
+
+        window.changePage = function(delta) {
+            renderPage(currentPage + delta);
+        };
+
         const selectAll = document.getElementById('selectAll');
-        if (!selectAll) return;
-        selectAll.addEventListener('change', (e) => {
-            const checked = e.target.checked;
-            document.querySelectorAll('.student-checkbox').forEach(cb => cb.checked = checked);
-        });
+        if (selectAll) {
+            selectAll.addEventListener('change', (e) => {
+                const checked = e.target.checked;
+                // Only select/deselect visible rows on the current page
+                allRows.forEach(row => {
+                    if (row.style.display !== 'none') {
+                        const cb = row.querySelector('.student-checkbox');
+                        if (cb) cb.checked = checked;
+                    }
+                });
+            });
+        }
+
+        if (totalPages > 0) renderPage(1);
     })();
 </script>
 </body>

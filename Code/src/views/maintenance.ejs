@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Admin - Repository Maintenance</title>
@@ -26,7 +26,7 @@
 <% const courseQuery = selectedCourseId ? `&courseId=${selectedCourseId}` : ''; %>
 <% const sortQuery = sortParam && sortParam !== 'newest' ? `&sort=${sortParam}` : ''; %>
 
-<div style="margin-bottom: 1.5rem;">
+<div class="active-filters-wrapper">
     <% if (selectedCourseId || (sortParam && sortParam !== 'newest')) { %>
     <div class="active-filters">
         <span style="font-weight: 600;">Active Filters:</span>
@@ -38,77 +38,82 @@
         %>
             <a href="/admin/maintenance?sort=<%= sortParam || 'newest' %>" class="filter-chip">Course: <%= courseName %> &times;</a>
         <% } %>
-        <a href="/admin/maintenance" style="margin-left: 10px; font-size: 0.9rem;">Clear All</a>
+        <a href="/admin/maintenance" class="active-filters-clear">Clear All</a>
     </div>
     <% } %>
 </div>
 
-<section class="section">
-    <h2>Age</h2>
-    <div class="section-content">
-        <div class="section-item">
-            <strong>Sort by Age:</strong>
-            <a href="/admin/maintenance?sort=newest<%= courseQuery %>"><button>Newest First</button></a>
-            <a href="/admin/maintenance?sort=oldest<%= courseQuery %>"><button>Oldest First</button></a>
-        </div>
-        <div class="section-item">
-            <strong>Delete All Before Date:</strong>
-            <form action="/admin/maintenance/delete-before" method="POST" class="form-inline" onsubmit="return confirm('Delete all files before this date? This action cannot be undone.');">
-                <input type="datetime-local" name="deleteBeforeDate" required>
-                <button type="submit" class="danger-btn">Delete All</button>
-            </form>
-        </div>
-    </div>
-</section>
+<div class="filter-bar">
+    <strong style="display:block; margin-bottom:1rem; font-size:1rem;">Filters &amp; Sort</strong>
 
-<section class="section">
-    <h2>Student Number</h2>
-    <div class="section-content">
-        <div class="section-item">
-            <strong>Sort by Student Number:</strong>
-            <a href="/admin/maintenance?sort=increasing<%= courseQuery %>"><button>Increasing</button></a>
-            <a href="/admin/maintenance?sort=decreasing<%= courseQuery %>"><button>Decreasing</button></a>
+    <section class="section">
+        <h2>Age</h2>
+        <div class="section-content">
+            <div class="section-item">
+                <strong>Sort by Age:</strong>
+                <a href="/admin/maintenance?sort=newest<%= courseQuery %>"><button>Newest First</button></a>
+                <a href="/admin/maintenance?sort=oldest<%= courseQuery %>"><button>Oldest First</button></a>
+            </div>
+            <div class="section-item">
+                <strong>Delete All Before Date:</strong>
+                <form action="/admin/maintenance/delete-before" method="POST" class="form-inline" onsubmit="return confirm('Delete all files before this date? This action cannot be undone.');">
+                    <input type="datetime-local" name="deleteBeforeDate" required>
+                    <button type="submit" class="danger-btn">Delete All</button>
+                </form>
+            </div>
         </div>
-        <div class="section-item">
-            <strong>Delete All Before Student Number:</strong>
-            <form action="/admin/maintenance/delete-before-student-number" method="POST" class="form-inline" onsubmit="return confirm('Delete all files before this student number? This action cannot be undone.');">
-                <input type="number" name="studentNumber" placeholder="Enter student number" required>
-                <button type="submit" class="danger-btn">Delete All</button>
-            </form>
-        </div>
-    </div>
-</section>
+    </section>
 
-<section class="section">
-    <h2>Course</h2>
-    <div class="section-content">
-        <div class="section-item">
-            <form action="/admin/maintenance" method="GET" class="form-inline">
-                <input type="hidden" name="sort" value="<%= sortParam || 'newest' %>">
-                <label style="margin-right:6px;"><strong>Filter by Course:</strong></label>
-                <select name="courseId">
-                    <option value="">All Courses</option>
-                    <% (courses || []).forEach(function(course) { %>
-                        <option value="<%= course.id %>" <%= String(selectedCourseId||'') === String(course.id) ? 'selected' : '' %>><%= course.name %></option>
-                    <% }); %>
-                </select>
-                <button type="submit" style="margin-left:8px;">Apply</button>
-            </form>
+    <section class="section">
+        <h2>Student Number</h2>
+        <div class="section-content">
+            <div class="section-item">
+                <strong>Sort by Student Number:</strong>
+                <a href="/admin/maintenance?sort=increasing<%= courseQuery %>"><button>Increasing</button></a>
+                <a href="/admin/maintenance?sort=decreasing<%= courseQuery %>"><button>Decreasing</button></a>
+            </div>
+            <div class="section-item">
+                <strong>Delete All Before Student Number:</strong>
+                <form action="/admin/maintenance/delete-before-student-number" method="POST" class="form-inline" onsubmit="return confirm('Delete all files before this student number? This action cannot be undone.');">
+                    <input type="number" name="studentNumber" placeholder="Enter student number" required>
+                    <button type="submit" class="danger-btn">Delete All</button>
+                </form>
+            </div>
         </div>
-        <div class="section-item">
-            <strong>Delete All By Course:</strong>
-            <form action="/admin/maintenance/delete-by-course" method="POST" class="form-inline" onsubmit="return confirm('Delete all files for this course? This action cannot be undone.');">
-                <select name="courseId" required>
-                    <option value="">Select course</option>
-                    <% (courses || []).forEach(function(course) { %>
-                        <option value="<%= course.id %>"><%= course.name %></option>
-                    <% }); %>
-                </select>
-                <button type="submit" class="danger-btn" style="margin-left:8px;">Delete All</button>
-            </form>
+    </section>
+
+    <section class="section">
+        <h2>Course</h2>
+        <div class="section-content">
+            <div class="section-item">
+                <form action="/admin/maintenance" method="GET" class="form-inline">
+                    <input type="hidden" name="sort" value="<%= sortParam || 'newest' %>">
+                    <label style="margin-right:6px;"><strong>Filter by Course:</strong></label>
+                    <select name="courseId">
+                        <option value="">All Courses</option>
+                        <% (courses || []).forEach(function(course) { %>
+                            <option value="<%= course.id %>" <%= String(selectedCourseId||'') === String(course.id) ? 'selected' : '' %>><%= course.name %></option>
+                        <% }); %>
+                    </select>
+                    <button type="submit" style="margin-left:8px;">Apply</button>
+                </form>
+            </div>
+            <div class="section-item">
+                <strong>Delete All By Course:</strong>
+                <form action="/admin/maintenance/delete-by-course" method="POST" class="form-inline" onsubmit="return confirm('Delete all files for this course? This action cannot be undone.');">
+                    <select name="courseId" required>
+                        <option value="">Select course</option>
+                        <% (courses || []).forEach(function(course) { %>
+                            <option value="<%= course.id %>"><%= course.name %></option>
+                        <% }); %>
+                    </select>
+                    <button type="submit" class="danger-btn" style="margin-left:8px;">Delete All</button>
+                </form>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
+
+</div>
 
 <table>
     <thead>

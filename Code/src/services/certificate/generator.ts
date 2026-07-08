@@ -166,13 +166,15 @@ function renderLayoutToHtml(layout: TemplateLayout, student: Student): string {
             position: absolute;
             margin: 0;
             padding: 0;
-            white-space: nowrap;
+            white-space: pre-wrap;
+            max-width: 80%;
         }
 
         .template-element-centered {
             left: 50% !important;
             transform: translateX(-50%);
             text-align: center;
+            width: 80%;
         }
     </style>
 </head>
