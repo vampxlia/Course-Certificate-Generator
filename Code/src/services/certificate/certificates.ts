@@ -1,4 +1,4 @@
-
+// my_code
 import { generatePdfCertificates } from './generator';
 import { sendUserCertificateEmail } from './sendEmail';
 import {ICourseDAO} from "../../dao/interfaces/ICourseDAO";
