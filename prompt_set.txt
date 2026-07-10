@@ -1,0 +1,313 @@
+#Recriação das prompts utilizadas
+
+## Prompt 1 — Configuração inicial da aplicação
+
+**Objetivo**
+
+Criar o ponto de entrada da aplicação e organizar todas as rotas seguindo a arquitetura MVC.
+
+**Prompt**
+
+Estou a desenvolver uma aplicação web em TypeScript utilizando Express.js e arquitetura MVC para a geração automática de certificados de curso.
+
+Cria o ficheiro `app.ts` responsável por inicializar a aplicação. Configura o motor de vistas EJS, serve os ficheiros estáticos da pasta `public`, adiciona os middlewares necessários (JSON, formulários e sessões) e organiza as rotas por módulos.
+
+Cada funcionalidade deverá possuir o seu próprio router (`admin`, `auth`, `certificates`, `templates`, `maintenance` e `settings`), existindo ainda um router principal (`index.ts`) que agregue todos os restantes.
+
+Mantém a estrutura modular e preparada para futuras funcionalidades.
+
+**Ficheiros associados**
+
+* `Code/src/app.ts`
+* `Code/src/routes/index.ts`
+* `Code/src/routes/admin.ts`
+* `Code/src/routes/auth.ts`
+* `Code/src/routes/certificates.ts`
+* `Code/src/routes/maintenance.ts`
+* `Code/src/routes/templates.ts`
+* `Code/src/routes/settings.ts`
+
+---
+
+## Prompt 2 — Configuração do ambiente
+
+**Objetivo**
+
+Centralizar todas as configurações da aplicação.
+
+**Prompt**
+
+Pretendo separar toda a configuração da aplicação em módulos independentes.
+
+Cria ficheiros responsáveis pela configuração da ligação à base de dados MySQL, do servidor SMTP para envio de emails, do diretório local onde serão armazenados os certificados gerados, da configuração da assinatura digital utilizando certificados PKCS#12 (.p12) e da estratégia de armazenamento dos certificados.
+
+Evita valores hardcoded e cria uma estrutura reutilizável pelas restantes camadas da aplicação.
+
+**Ficheiros associados**
+
+* `Code/src/configs/db.ts`
+* `Code/src/configs/email.ts`
+* `Code/src/configs/localRepository.ts`
+* `Code/src/configs/signature/signature.ts`
+* `Code/src/configs/certificates/certificateDB.ts`
+
+---
+
+## Prompt 3 — Autenticação e autorização
+
+**Objetivo**
+
+Implementar autenticação e controlo de acessos baseado em funções.
+
+**Prompt**
+
+O sistema possui dois perfis de utilizador: administrador e utilizador normal.
+
+Implementa o controlo de acessos utilizando Casbin (RBAC). Cria o modelo Casbin, o carregamento das políticas e os middlewares necessários para autenticação baseada em sessão, autorização de rotas e verificação de permissões específicas.
+
+A solução deverá permitir adicionar novas permissões sem alterar a lógica existente.
+
+**Ficheiros associados**
+
+* `Code/src/configs/casbin/casbin.ts`
+* `Code/src/middlewares/authenticate.ts`
+* `Code/src/middlewares/authorize.ts`
+* `Code/src/middlewares/checkPermission.ts`
+
+---
+
+## Prompt 4 — Modelos do domínio
+
+**Objetivo**
+
+Definir os modelos principais utilizados pela aplicação.
+
+**Prompt**
+
+Cria os modelos TypeScript que representam as principais entidades do sistema de geração automática de certificados.
+
+Devem existir modelos para utilizadores, estudantes, cursos, templates de certificados e certificados emitidos. Utiliza interfaces ou classes sempre que fizer sentido e garante que os modelos podem ser reutilizados pelas camadas DAO, serviços e controladores.
+
+**Ficheiros associados**
+
+* `Code/src/model/user.ts`
+* `Code/src/model/student.ts`
+* `Code/src/model/course.ts`
+* `Code/src/model/template.ts`
+* `Code/src/model/certificate.ts`
+
+---
+
+## Prompt 5 — Camada de persistência
+
+**Objetivo**
+
+Criar diferentes implementações de acesso aos dados.
+
+**Prompt**
+
+Pretendo abstrair o acesso aos dados para permitir diferentes formas de armazenamento.
+
+Implementa DAOs para MySQL e uma implementação alternativa utilizando variáveis em memória para testes e desenvolvimento.
+
+Mantém a mesma interface para ambas as implementações, permitindo trocar o backend sem alterar o restante código da aplicação.
+
+**Ficheiros associados**
+
+* `Code/src/dao/implementations/sql/sqlCourseDAO.ts`
+* `Code/src/dao/implementations/sql/sqlStudentDAO.ts`
+* `Code/src/dao/implementations/sql/sqlUserDAO.ts`
+* `Code/src/dao/implementations/variableUnsafe/variableCourseDAO.ts`
+* `Code/src/dao/implementations/variableUnsafe/variableStudentDAO.ts`
+* `Code/src/dao/implementations/variableUnsafe/variableUserDAO.ts`
+
+---
+
+## Prompt 6 — Gestão de templates
+
+**Objetivo**
+
+Implementar a persistência e gestão dos templates de certificados.
+
+**Prompt**
+
+Os templates dos certificados são armazenados localmente em formato JSON.
+
+Cria uma implementação DAO responsável por guardar, editar, remover e listar templates, bem como um serviço que disponibilize operações CRUD reutilizáveis pelos controladores da aplicação.
+
+**Ficheiros associados**
+
+* `Code/src/dao/implementations/local/templateDAO.ts`
+* `Code/src/services/certificate/template.ts`
+
+---
+
+## Prompt 7 — Renderização dos certificados
+
+**Objetivo**
+
+Converter um template em HTML para pré-visualização e geração de PDF.
+
+**Prompt**
+
+Tenho um template de certificado armazenado em JSON contendo elementos como textos, imagens, logótipos e assinaturas.
+
+Cria um helper responsável por converter esse layout em HTML para posterior geração de PDF utilizando Puppeteer.
+
+O helper deverá posicionar corretamente todos os elementos, substituir os dados do aluno e do curso e produzir exatamente o mesmo resultado tanto para a pré-visualização como para o PDF final.
+
+**Ficheiros associados**
+
+* `Code/src/services/certificate/renderHelper.ts`
+
+---
+
+## Prompt 8 — Configurações da aplicação
+
+**Objetivo**
+
+Gerir as definições de assinatura digital e armazenamento.
+
+**Prompt**
+
+Implementa um serviço responsável por processar o upload de certificados digitais PKCS#12 (.p12), guardar as respetivas configurações, validar os ficheiros enviados e configurar o repositório onde serão armazenados os certificados gerados.
+
+As configurações deverão poder ser alteradas sem necessidade de recompilar a aplicação.
+
+**Ficheiros associados**
+
+* `Code/src/services/settings/settings.ts`
+
+---
+
+## Prompt 9 — Geração e envio de certificados
+
+**Objetivo**
+
+Implementar a lógica principal da emissão de certificados.
+
+**Prompt**
+
+Implementa o controlador responsável pela emissão automática de certificados.
+
+O controlador deverá apresentar a página de geração, receber os alunos selecionados, gerar certificados PDF através do Puppeteer, assinar digitalmente cada documento utilizando um certificado PKCS#12, guardar os PDFs no repositório configurado e enviá-los por email através do Nodemailer.
+
+Durante o processamento em lote, trata erros individuais para que uma falha não interrompa a emissão dos restantes certificados.
+
+**Ficheiros associados**
+
+* `Code/src/controllers/certificates.ts`
+
+---
+
+## Prompt 10 — Administração de utilizadores
+
+**Objetivo**
+
+Implementar a gestão de utilizadores.
+
+**Prompt**
+
+Cria o controlador responsável pela administração de utilizadores.
+
+Implementa funcionalidades para listar, criar, editar e remover utilizadores, incluindo validação dos dados introduzidos, tratamento de erros e integração com o sistema de autenticação e permissões.
+
+**Ficheiros associados**
+
+* `Code/src/controllers/admin.ts`
+
+---
+
+## Prompt 11 — Controlador de definições
+
+**Objetivo**
+
+Disponibilizar as configurações da aplicação através da interface.
+
+**Prompt**
+
+Implementa o controlador responsável pela página de definições.
+
+O controlador deverá permitir alterar as configurações da assinatura digital, do armazenamento dos certificados e das restantes opções globais da aplicação, reutilizando o serviço de configurações desenvolvido anteriormente.
+
+**Ficheiros associados**
+
+* `Code/src/controllers/settings.ts`
+
+---
+
+## Prompt 12 — Manutenção do repositório
+
+**Objetivo**
+
+Gerir os certificados armazenados localmente.
+
+**Prompt**
+
+Implementa um controlador de manutenção que permita listar todos os certificados existentes no repositório local, visualizar a informação associada a cada certificado e remover certificados antigos quando necessário.
+
+Inclui tratamento adequado de erros e confirmação antes da eliminação.
+
+**Ficheiros associados**
+
+* `Code/src/controllers/maintenance.ts`
+
+---
+
+## Prompt 13 — Dashboard
+
+**Objetivo**
+
+Adaptar a interface às permissões do utilizador.
+
+**Prompt**
+
+Implementa a lógica do dashboard principal da aplicação.
+
+A interface deverá apresentar apenas as funcionalidades permitidas ao utilizador autenticado, consultando as permissões atribuídas pelo sistema RBAC implementado com Casbin.
+
+Evita apresentar menus ou ações para as quais o utilizador não possui autorização.
+
+**Ficheiros associados**
+
+* `Code/src/controllers/dashboard.ts`
+
+---
+
+## Prompt 14 — Gestão de templates
+
+**Objetivo**
+
+Implementar toda a interface de gestão de templates.
+
+**Prompt**
+
+Cria o controlador responsável pelos templates dos certificados.
+
+Implementa as páginas de listagem, criação, edição, eliminação e pré-visualização dos templates, reutilizando os serviços desenvolvidos anteriormente e garantindo validação dos dados recebidos.
+
+**Ficheiros associados**
+
+* `Code/src/controllers/templates.ts`
+
+---
+
+## Prompt 15 — Proteção das rotas
+
+**Objetivo**
+
+Garantir que apenas utilizadores autenticados podem aceder às funcionalidades protegidas.
+
+**Prompt**
+
+Implementa os middlewares responsáveis pela autenticação baseada em sessão e pela autorização baseada em permissões.
+
+As rotas protegidas deverão verificar se o utilizador iniciou sessão, confirmar as permissões necessárias antes de executar qualquer operação e devolver respostas adequadas quando o acesso for negado.
+
+Os middlewares deverão ser reutilizáveis em toda a aplicação.
+
+**Ficheiros associados**
+
+* `Code/src/middlewares/authenticate.ts`
+* `Code/src/middlewares/authorize.ts`
+* `Code/src/middlewares/checkPermission.ts`
