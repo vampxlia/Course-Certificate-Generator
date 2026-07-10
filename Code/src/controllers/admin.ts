@@ -4,6 +4,8 @@ import { IUserDAO } from '../dao/interfaces/IUserDAO';
 import { SqlUserDAO } from '../dao/implementations/sql/sqlUserDAO';
 import { userRole } from '../model/user';
 import { generateHashedPassword } from '../services/auth/auth'
+import cookieParser from "cookie-parser";
+import {logout} from "./auth";
 
 const userDAO: IUserDAO = new SqlUserDAO();
 
@@ -120,7 +122,11 @@ export const deleteUser = async (req: Request, res: Response) => {
 
     try {
         await userDAO.deleteUser(id);
-        res.redirect('/admin/users?success=User+deleted+successfully.');
+        if(id == req.cookies?.auth_id) {
+            logout(req, res)
+        } else {
+            res.redirect('/admin/users?success=User+deleted+successfully.');
+        }
     } catch (error) {
         console.error('Error deleting user:', error);
         res.redirect('/admin/users?error=Error+deleting+user.');

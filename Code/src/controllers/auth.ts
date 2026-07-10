@@ -26,6 +26,7 @@ export async function login(req: Request, res: Response) {
         res.cookie('auth_user', user.email, cookieOptions);
         res.cookie('auth_role', user.role, cookieOptions);
         res.cookie('auth_name', user.employeeName, cookieOptions);
+        res.cookie('auth_id', user.id, cookieOptions)
 
         return res.redirect('/');
     }
@@ -40,5 +41,6 @@ export function logout(req: Request, res: Response) {
     res.clearCookie('auth_user');
     res.clearCookie('auth_role');
     res.clearCookie('auth_name');
+    res.clearCookie('auth_id');
     return res.redirect('/auth/login');
 }
