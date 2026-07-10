@@ -1,7 +1,7 @@
 import nodemailer, { SendMailOptions } from 'nodemailer';
 import { Student } from "../../model/student";
 import { CertificateDAO } from "../../dao/implementations/local/certificateDAO";
-import settings from "../../configs/email"
+import {emailConfig} from "../../configs/email";
 
 const dao = new CertificateDAO();
 
@@ -10,19 +10,19 @@ const dao = new CertificateDAO();
  * Called per-send so any settings change takes effect immediately without restart.
  */
 function createTransporter() {
-    if (!settings.EMAIL_HOST || !settings.EMAIL_USER || !settings.EMAIL_PASSWORD) {
+    if (!emailConfig.settings.host || !emailConfig.settings.user || !emailConfig.settings.password) {
         throw new Error(
-            "Email não configurado."
+            "Email configuration Error"
         );
     }
 
     return nodemailer.createTransport({
-        host: settings.EMAIL_HOST,
-        port: settings.EMAIL_PORT,
-        secure: settings.EMAIL_PORT === 465, // true for port 465, false for others (STARTTLS)
+        host: emailConfig.settings.host,
+        port: emailConfig.settings.port,
+        secure: emailConfig.settings.port === 465, // true for port 465, false for others (STARTTLS)
         auth: {
-            user: settings.EMAIL_USER,
-            pass: settings.EMAIL_PASSWORD,
+            user: emailConfig.settings.user,
+            pass: emailConfig.settings.password,
         },
     });
 }
@@ -34,7 +34,7 @@ export const sendUserCertificateEmail = async (student: Student, filePath?: stri
     const transporter = createTransporter(); // throws if not configured
 
     const mailOptions: SendMailOptions = {
-        from: settings.EMAIL_SENDER,
+        from: emailConfig.settings.sender,
         to: student.email,
         subject: `Certificado ${student.name}!`,
         html: `

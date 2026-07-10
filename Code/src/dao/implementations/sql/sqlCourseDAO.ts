@@ -5,7 +5,6 @@ import {Course} from "../../../model/course";
 import {getInstitutionDbPool} from "../../../configs/db";
 
 export class sqlCourseDAO implements ICourseDAO {
-    private db: Pool = getInstitutionDbPool();
 
     /**
      * Retrieves a course by its ID (codigo_curso).
@@ -19,7 +18,7 @@ export class sqlCourseDAO implements ICourseDAO {
             LIMIT 1
         `;
 
-        const [rows] = await this.db.execute<RowDataPacket[]>(query, [id]);
+        const [rows] = await getInstitutionDbPool().execute<RowDataPacket[]>(query, [id]);
 
         if (rows.length === 0) {
             return null;
@@ -39,7 +38,7 @@ export class sqlCourseDAO implements ICourseDAO {
             LIMIT 1
         `;
 
-        const [rows] = await this.db.execute<RowDataPacket[]>(query, [name]);
+        const [rows] = await getInstitutionDbPool().execute<RowDataPacket[]>(query, [name]);
 
         if (rows.length === 0) {
             return null;
@@ -57,7 +56,7 @@ export class sqlCourseDAO implements ICourseDAO {
             FROM cursos
         `;
 
-        const [rows] = await this.db.execute<RowDataPacket[]>(query);
+        const [rows] = await getInstitutionDbPool().execute<RowDataPacket[]>(query);
 
         return rows.map(row => this.mapRowToCourse(row));
     }

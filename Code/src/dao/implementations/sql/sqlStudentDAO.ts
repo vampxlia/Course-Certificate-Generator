@@ -6,7 +6,6 @@ import {Course} from "../../../model/course";
 import {getInstitutionDbPool} from "../../../configs/db";
 
 export class sqlStudentDAO implements IStudentDAO {
-    private db: Pool = getInstitutionDbPool();
 
     /**
      * Reusable base query to fetch a Student, their associated Course,
@@ -40,7 +39,7 @@ export class sqlStudentDAO implements IStudentDAO {
             GROUP BY a.codigo_aluno, a.nome, a.email, c.codigo_curso, c.nome_curso, c.data_inicio, c.data_fim
         `;
 
-        const [rows] = await this.db.execute<RowDataPacket[]>(query, studentIds);
+        const [rows] = await getInstitutionDbPool().execute<RowDataPacket[]>(query, studentIds);
         return rows.map(row => this.mapRowToStudent(row));
     }
 
@@ -71,7 +70,7 @@ export class sqlStudentDAO implements IStudentDAO {
             HAVING nota_final >= 10
         `;
 
-        const [rows] = await this.db.execute<RowDataPacket[]>(query, params);
+        const [rows] = await getInstitutionDbPool().execute<RowDataPacket[]>(query, params);
         return rows.map(row => this.mapRowToStudent(row));
     }
 
