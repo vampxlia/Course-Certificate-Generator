@@ -7,23 +7,27 @@
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
+<%- include('../partials/_topbar') %>
 
-<h1>User Management</h1>
 
-<% if (successMessage) { %>
-    <p class="success"><%= successMessage %></p>
-<% } %>
-<% if (errorMessage) { %>
-    <p class="error"><%= errorMessage %></p>
-<% } %>
 
-<div class="page-header">
-    <p class="page-subtitle">Total: <strong><%= users.length %></strong> user(s)</p>
-    <a href="/admin/users/create" class="new-user-btn" id="btn-new-user">+ New User</a>
-</div>
+<div class="page-content-wrapper" style="margin-top: 80px; width: 100%;">
+    <h1>User Management</h1>
 
-<table class="vertical-middle-cells">
-    <thead>
+    <% if (successMessage) { %>
+        <p class="success"><%= successMessage %></p>
+    <% } %>
+    <% if (errorMessage) { %>
+        <p class="error"><%= errorMessage %></p>
+    <% } %>
+
+    <div class="page-header">
+        <p class="page-subtitle">Total: <strong><%= users.length %></strong> user(s)</p>
+        <a href="/admin/users/create" class="new-user-btn" id="btn-new-user">+ New User</a>
+    </div>
+
+    <table class="vertical-middle-cells">
+        <thead>
         <tr>
             <th>#ID</th>
             <th>Name</th>
@@ -31,8 +35,8 @@
             <th>Role</th>
             <th>Actions</th>
         </tr>
-    </thead>
-    <tbody>
+        </thead>
+        <tbody>
         <% if (users.length === 0) { %>
             <tr><td colspan="5" class="table-empty-cell">No user found.</td></tr>
         <% } %>
@@ -57,10 +61,11 @@
                 </td>
             </tr>
         <% }); %>
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
 
-<p class="back-link-spaced"><a href="/" class="back-link">← Back to Dashboard</a></p>
+
 
 </body>
 </html>

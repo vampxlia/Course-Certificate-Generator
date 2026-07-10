@@ -6,146 +6,151 @@
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-<h1>Repository Maintenance</h1>
+<%- include('partials/_topbar') %>
 
-<div style="margin-top: 1.5rem; margin-bottom: 2rem;">
-    <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem; margin-bottom: 8px;">
-        <span>Server Storage Usage (Certificates)</span>
-        <span><%= (currentSizeBytes / (1024 * 1024)).toFixed(2) %> MB / <%= (maxSizeBytes / (1024 * 1024)).toFixed(2) %> MB (<%= usagePercentage.toFixed(1) %>%)</span>
-    </div>
+<div class="page-content-wrapper" style="margin-top: 80px; width: 100%;">
+    <h1>Repository Maintenance</h1>
 
-    <div style="width: 100%; background-color: #e0e0e0; border-radius: 8px; overflow: hidden; height: 20px;">
-        <div style="height: 100%; transition: width 0.3s ease;
-                width: <%= usagePercentage %>%;
-                /* Color shifts: Green by default, Orange at >75%, Red at >90% */
-                background-color: <%= usagePercentage > 90 ? '#f44336' : (usagePercentage > 75 ? '#ff9800' : '#4caf50') %>;">
+    <div style="margin-top: 1.5rem; margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem; margin-bottom: 8px;">
+            <span>Server Storage Usage (Certificates)</span>
+            <span><%= (currentSizeBytes / (1024 * 1024)).toFixed(2) %> MB / <%= (maxSizeBytes / (1024 * 1024)).toFixed(2) %> MB (<%= usagePercentage.toFixed(1) %>%)</span>
+        </div>
+
+        <div style="width: 100%; background-color: #e0e0e0; border-radius: 8px; overflow: hidden; height: 20px;">
+            <div style="height: 100%; transition: width 0.3s ease;
+                    width: <%= usagePercentage %>%;
+                    /* Color shifts: Green by default, Orange at >75%, Red at >90% */
+                    background-color: <%= usagePercentage > 90 ? '#f44336' : (usagePercentage > 75 ? '#ff9800' : '#4caf50') %>;">
+            </div>
         </div>
     </div>
-</div>
 
-<% const courseQuery = selectedCourseId ? `&courseId=${selectedCourseId}` : ''; %>
-<% const sortQuery = sortParam && sortParam !== 'newest' ? `&sort=${sortParam}` : ''; %>
+    <% const courseQuery = selectedCourseId ? `&courseId=${selectedCourseId}` : ''; %>
+    <% const sortQuery = sortParam && sortParam !== 'newest' ? `&sort=${sortParam}` : ''; %>
 
-<div class="active-filters-wrapper">
-    <% if (selectedCourseId || (sortParam && sortParam !== 'newest')) { %>
-    <div class="active-filters">
-        <span style="font-weight: 600;">Active Filters:</span>
-        <% if (sortParam && sortParam !== 'newest') { %>
-            <a href="/admin/maintenance?<%= selectedCourseId ? `courseId=${selectedCourseId}` : '' %>" class="filter-chip">Sort: <%= sortParam %> &times;</a>
+    <div class="active-filters-wrapper">
+        <% if (selectedCourseId || (sortParam && sortParam !== 'newest')) { %>
+            <div class="active-filters">
+                <span style="font-weight: 600;">Active Filters:</span>
+                <% if (sortParam && sortParam !== 'newest') { %>
+                    <a href="/admin/maintenance?<%= selectedCourseId ? `courseId=${selectedCourseId}` : '' %>" class="filter-chip">Sort: <%= sortParam %> &times;</a>
+                <% } %>
+                <% if (selectedCourseId) {
+                    const courseName = (courses || []).find(c => String(c.id) === String(selectedCourseId))?.name || selectedCourseId;
+                %>
+                <a href="/admin/maintenance?sort=<%= sortParam || 'newest' %>" class="filter-chip">Course: <%= courseName %> &times;</a>
+                <% } %>
+                <a href="/admin/maintenance" class="active-filters-clear">Clear All</a>
+            </div>
         <% } %>
-        <% if (selectedCourseId) { 
-            const courseName = (courses || []).find(c => String(c.id) === String(selectedCourseId))?.name || selectedCourseId;
-        %>
-            <a href="/admin/maintenance?sort=<%= sortParam || 'newest' %>" class="filter-chip">Course: <%= courseName %> &times;</a>
-        <% } %>
-        <a href="/admin/maintenance" class="active-filters-clear">Clear All</a>
     </div>
-    <% } %>
-</div>
 
-<div class="filter-bar">
-    <strong style="display:block; margin-bottom:1rem; font-size:1rem;">Filters &amp; Sort</strong>
+    <div class="filter-bar">
+        <strong style="display:block; margin-bottom:1rem; font-size:1rem;">Filters &amp; Sort</strong>
 
-    <section class="section">
-        <h2>Age</h2>
-        <div class="section-content">
-            <div class="section-item">
-                <strong>Sort by Age:</strong>
-                <a href="/admin/maintenance?sort=newest<%= courseQuery %>"><button>Newest First</button></a>
-                <a href="/admin/maintenance?sort=oldest<%= courseQuery %>"><button>Oldest First</button></a>
+        <section class="section">
+            <h2>Age</h2>
+            <div class="section-content">
+                <div class="section-item">
+                    <strong>Sort by Age:</strong>
+                    <a href="/admin/maintenance?sort=newest<%= courseQuery %>"><button>Newest First</button></a>
+                    <a href="/admin/maintenance?sort=oldest<%= courseQuery %>"><button>Oldest First</button></a>
+                </div>
+                <div class="section-item">
+                    <strong>Delete All Before Date:</strong>
+                    <form action="/admin/maintenance/delete-before" method="POST" class="form-inline" onsubmit="return confirm('Delete all files before this date? This action cannot be undone.');">
+                        <input type="datetime-local" name="deleteBeforeDate" required>
+                        <button type="submit" class="danger-btn">Delete All</button>
+                    </form>
+                </div>
             </div>
-            <div class="section-item">
-                <strong>Delete All Before Date:</strong>
-                <form action="/admin/maintenance/delete-before" method="POST" class="form-inline" onsubmit="return confirm('Delete all files before this date? This action cannot be undone.');">
-                    <input type="datetime-local" name="deleteBeforeDate" required>
-                    <button type="submit" class="danger-btn">Delete All</button>
-                </form>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <section class="section">
-        <h2>Student Number</h2>
-        <div class="section-content">
-            <div class="section-item">
-                <strong>Sort by Student Number:</strong>
-                <a href="/admin/maintenance?sort=increasing<%= courseQuery %>"><button>Increasing</button></a>
-                <a href="/admin/maintenance?sort=decreasing<%= courseQuery %>"><button>Decreasing</button></a>
+        <section class="section">
+            <h2>Student Number</h2>
+            <div class="section-content">
+                <div class="section-item">
+                    <strong>Sort by Student Number:</strong>
+                    <a href="/admin/maintenance?sort=increasing<%= courseQuery %>"><button>Increasing</button></a>
+                    <a href="/admin/maintenance?sort=decreasing<%= courseQuery %>"><button>Decreasing</button></a>
+                </div>
+                <div class="section-item">
+                    <strong>Delete All Before Student Number:</strong>
+                    <form action="/admin/maintenance/delete-before-student-number" method="POST" class="form-inline" onsubmit="return confirm('Delete all files before this student number? This action cannot be undone.');">
+                        <input type="number" name="studentNumber" placeholder="Enter student number" required>
+                        <button type="submit" class="danger-btn">Delete All</button>
+                    </form>
+                </div>
             </div>
-            <div class="section-item">
-                <strong>Delete All Before Student Number:</strong>
-                <form action="/admin/maintenance/delete-before-student-number" method="POST" class="form-inline" onsubmit="return confirm('Delete all files before this student number? This action cannot be undone.');">
-                    <input type="number" name="studentNumber" placeholder="Enter student number" required>
-                    <button type="submit" class="danger-btn">Delete All</button>
-                </form>
+        </section>
+
+        <section class="section">
+            <h2>Course</h2>
+            <div class="section-content">
+                <div class="section-item">
+                    <form action="/admin/maintenance" method="GET" class="form-inline">
+                        <input type="hidden" name="sort" value="<%= sortParam || 'newest' %>">
+                        <label style="margin-right:6px;"><strong>Filter by Course:</strong></label>
+                        <select name="courseId">
+                            <option value="">All Courses</option>
+                            <% (courses || []).forEach(function(course) { %>
+                                <option value="<%= course.id %>" <%= String(selectedCourseId||'') === String(course.id) ? 'selected' : '' %>><%= course.name %></option>
+                            <% }); %>
+                        </select>
+                        <button type="submit" style="margin-left:8px;">Apply</button>
+                    </form>
+                </div>
+                <div class="section-item">
+                    <strong>Delete All By Course:</strong>
+                    <form action="/admin/maintenance/delete-by-course" method="POST" class="form-inline" onsubmit="return confirm('Delete all files for this course? This action cannot be undone.');">
+                        <select name="courseId" required>
+                            <option value="">Select course</option>
+                            <% (courses || []).forEach(function(course) { %>
+                                <option value="<%= course.id %>"><%= course.name %></option>
+                            <% }); %>
+                        </select>
+                        <button type="submit" class="danger-btn" style="margin-left:8px;">Delete All</button>
+                    </form>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section class="section">
-        <h2>Course</h2>
-        <div class="section-content">
-            <div class="section-item">
-                <form action="/admin/maintenance" method="GET" class="form-inline">
-                    <input type="hidden" name="sort" value="<%= sortParam || 'newest' %>">
-                    <label style="margin-right:6px;"><strong>Filter by Course:</strong></label>
-                    <select name="courseId">
-                        <option value="">All Courses</option>
-                        <% (courses || []).forEach(function(course) { %>
-                            <option value="<%= course.id %>" <%= String(selectedCourseId||'') === String(course.id) ? 'selected' : '' %>><%= course.name %></option>
-                        <% }); %>
-                    </select>
-                    <button type="submit" style="margin-left:8px;">Apply</button>
-                </form>
-            </div>
-            <div class="section-item">
-                <strong>Delete All By Course:</strong>
-                <form action="/admin/maintenance/delete-by-course" method="POST" class="form-inline" onsubmit="return confirm('Delete all files for this course? This action cannot be undone.');">
-                    <select name="courseId" required>
-                        <option value="">Select course</option>
-                        <% (courses || []).forEach(function(course) { %>
-                            <option value="<%= course.id %>"><%= course.name %></option>
-                        <% }); %>
-                    </select>
-                    <button type="submit" class="danger-btn" style="margin-left:8px;">Delete All</button>
-                </form>
-            </div>
-        </div>
-    </section>
+    </div>
 
-</div>
-
-<table>
-    <thead>
-    <tr>
-        <th>File Name</th>
-        <th>Created At</th>
-        <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    <% if (files.length === 0) { %>
-        <tr><td colspan="3">No certificates found.</td></tr>
-    <% } %>
-
-    <% files.forEach(function(file) { %>
+    <table>
+        <thead>
         <tr>
-            <td><%= file.name %></td>
-            <td><%= file.createdAt.toLocaleString() %></td>
-            <td>
-                <a href="/admin/maintenance/preview/<%= file.name %>" target="_blank">
-                    <button type="button">Preview</button>
-                </a>
-                <form action="/admin/maintenance/delete" method="POST" class="form-inline" onsubmit="return confirm('Delete this file permanently?');">
-                    <input type="hidden" name="fileName" value="<%= file.name %>">
-                    <button type="submit" class="danger-btn">Delete Now</button>
-                </form>
-            </td>
+            <th>File Name</th>
+            <th>Created At</th>
+            <th>Actions</th>
         </tr>
-    <% }); %>
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        <% if (files.length === 0) { %>
+            <tr><td colspan="3">No certificates found.</td></tr>
+        <% } %>
 
-<p><a href="/">Back to Dashboard</a></p>
+        <% files.forEach(function(file) { %>
+            <tr>
+                <td><%= file.name %></td>
+                <td><%= file.createdAt.toLocaleString() %></td>
+                <td>
+                    <a href="/admin/maintenance/preview/<%= file.name %>" target="_blank">
+                        <button type="button">Preview</button>
+                    </a>
+                    <form action="/admin/maintenance/delete" method="POST" class="form-inline" onsubmit="return confirm('Delete this file permanently?');">
+                        <input type="hidden" name="fileName" value="<%= file.name %>">
+                        <button type="submit" class="danger-btn">Delete Now</button>
+                    </form>
+                </td>
+            </tr>
+        <% }); %>
+        </tbody>
+    </table>
+</div>
+
+
+
 </body>
 </html>

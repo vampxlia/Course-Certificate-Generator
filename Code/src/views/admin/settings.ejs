@@ -7,177 +7,183 @@
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-<h1>System Settings</h1>
+<%- include('../partials/_topbar') %>
 
-<% if (successMessage) { %>
-    <p class="success"><%= successMessage %></p>
-<% } %>
-<% if (errorMessage) { %>
-    <p class="error"><%= errorMessage %></p>
-<% } %>
+<div class="page-content-wrapper" style="margin-top: 80px; width: 100%;">
 
-<!-- Tab navigation -->
-<div class="section-tabs">
-    <button class="tab-btn active" onclick="showTab('tab-signature', this)" type="button" id="btn-tab-signature">
-        Digital Signature
-    </button>
-    <button class="tab-btn" onclick="showTab('tab-repo', this)" type="button" id="btn-tab-repo">
-        Storage
-    </button>
-</div>
+    <h1>System Settings</h1>
 
-<!-- ══════════════════════════════════════════════════
-     TAB 1 — DIGITAL SIGNATURE
-     ══════════════════════════════════════════════════ -->
-<div id="tab-signature" class="tab-panel active">
-<form action="/admin/settings/signature" method="POST" enctype="multipart/form-data">
+    <% if (successMessage) { %>
+        <p class="success"><%= successMessage %></p>
+    <% } %>
+    <% if (errorMessage) { %>
+        <p class="error"><%= errorMessage %></p>
+    <% } %>
 
-    <!-- Enable / Disable -->
-    <section class="section">
-        <h2>Certificate Signing</h2>
-        <div class="toggle-row">
-            <label class="switch">
-                <input type="checkbox" name="enabled" id="enabled" <%= signatureSettings.enabled ? 'checked' : '' %>>
-                <span class="slider"></span>
-            </label>
-            <span class="toggle-label">
+    <!-- Tab navigation -->
+    <div class="section-tabs">
+        <button class="tab-btn active" onclick="showTab('tab-signature', this)" type="button" id="btn-tab-signature">
+            Digital Signature
+        </button>
+        <button class="tab-btn" onclick="showTab('tab-repo', this)" type="button" id="btn-tab-repo">
+            Storage
+        </button>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         TAB 1 — DIGITAL SIGNATURE
+         ══════════════════════════════════════════════════ -->
+    <div id="tab-signature" class="tab-panel active">
+        <form action="/admin/settings/signature" method="POST" enctype="multipart/form-data">
+
+            <!-- Enable / Disable -->
+            <section class="section">
+                <h2>Certificate Signing</h2>
+                <div class="toggle-row">
+                    <label class="switch">
+                        <input type="checkbox" name="enabled" id="enabled" <%= signatureSettings.enabled ? 'checked' : '' %>>
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-label">
                 Digital Signature
                 <%= signatureSettings.enabled%>
             </span>
-        </div>
-    </section>
-
-    <!-- Certificate (.p12) -->
-    <section class="section">
-        <h2>Digital Signature (.p12)</h2>
-        <div class="form-group">
-            <label>Signature State:</label>
-            <% if (signatureSettings.hasCertificate) { %>
-                <span class="status-badge ok">Signature loaded</span>
-            <% } else { %>
-                <span class="status-badge nok">No signature loaded</span>
-            <% } %>
-        </div>
-
-        <div class="form-group">
-            <label for="p12file">Upload new signature (.p12 / .pfx)</label>
-            <input type="file" name="p12file" id="p12file" accept=".p12,.pfx">
-            <small>Upload a file to replace the current signature. Leave this field empty to keep the current one.</small>
-        </div>
-
-        <div class="form-group">
-            <label for="passphrase">Signature Password</label>
-            <input type="password" name="passphrase" id="passphrase"
-                   autocomplete="new-password"
-                   placeholder="<%= signatureSettings.hasCertificate
-                       ? '••••••••  (leave blank to keep current)'
-                       : 'Enter the password' %>">
-            <small>
-                <% if (signatureSettings.hasCertificate) { %>
-                    Password saved. Only fill this field if you want to alter it.
-                <% } else { %>
-                    Mandatory.
-                <% } %>
-            </small>
-        </div>
-    </section>
-
-    <!-- Institution Metadata -->
-    <section class="section">
-        <h2>Institution Metadata</h2>
-        <p class="section-subtitle">
-            This data is visible on PDF readers when verifying signatures.
-        </p>
-
-        <div class="form-group">
-            <label for="name">Institution Name</label>
-            <input type="text" name="name" id="name"
-                   value="<%= signatureSettings.name %>"
-                   placeholder="Ex.: Universidade de Lisboa">
-        </div>
-
-        <div class="form-group">
-            <label for="contact">Contact Email</label>
-            <input type="email" name="contact" id="contact"
-                   value="<%= signatureSettings.contact %>"
-                   placeholder="Ex.: certificados@universidade.pt">
-        </div>
-
-        <div class="form-group">
-            <label for="location">Location</label>
-            <input type="text" name="location" id="location"
-                   value="<%= signatureSettings.location %>"
-                   placeholder="Ex.: Lisboa, Portugal">
-        </div>
-
-        <div class="form-group">
-            <label for="reason">Reason for Signature</label>
-            <input type="text" name="reason" id="reason"
-                   value="<%= signatureSettings.reason %>"
-                   placeholder="Ex.: Course Certificate Authentication">
-        </div>
-    </section>
-
-    <button type="submit" class="primary-btn" id="btn-save-signature">Save Settings</button>
-</form>
-</div>
-
-<!-- ══════════════════════════════════════════════════
-     TAB 2 — REPOSITORY SETTINGS
-     ══════════════════════════════════════════════════ -->
-<div id="tab-repo" class="tab-panel">
-    <form action="/admin/settings/repo" method="POST">
-
-        <section class="section">
-            <h2>Certificate Storage Settings</h2>
-            <p class="section-subtitle">
-                Configure local storage settings for generated certificates.
-            </p>
-
-            <div class="form-group">
-                <label for="maxSize">Max Allowed Size</label>
-                <div class="size-input-row">
-                    <input type="number" name="maxSize" id="maxSize"
-                           value="<%= typeof repoSettings !== 'undefined' ? repoSettings.size : '' %>"
-                           placeholder="Ex.: 10. Leave this field empty to not change it.">
-
-                    <select name="maxSizeUnit" id="maxSizeUnit" class="size-unit-select">
-                        <% const currentUnit = typeof repoSettings !== 'undefined' ? repoSettings.unit : 'MB'; %>
-                        <option value="B" <%= currentUnit === 'B' ? 'selected' : '' %>>Bytes</option>
-                        <option value="KB" <%= currentUnit === 'KB' ? 'selected' : '' %>>KB</option>
-                        <option value="MB" <%= currentUnit === 'MB' ? 'selected' : '' %>>MB</option>
-                        <option value="GB" <%= currentUnit === 'GB' ? 'selected' : '' %>>GB</option>
-                    </select>
                 </div>
-            </div>
+            </section>
 
-            <div class="form-group">
-                <label for="maxUsePercentage">Max size usage Percentage (%)</label>
-                <input type="number" name="maxUsePercentage" id="maxUsePercentage" min="1" max="100"
-                       placeholder="Ex.: 90. Leave this field empty to not change it.">
-                <small>If this threshold is exceeded, older certificates are deleted.</small>
-            </div>
-        </section>
+            <!-- Certificate (.p12) -->
+            <section class="section">
+                <h2>Digital Signature (.p12)</h2>
+                <div class="form-group">
+                    <label>Signature State:</label>
+                    <% if (signatureSettings.hasCertificate) { %>
+                        <span class="status-badge ok">Signature loaded</span>
+                    <% } else { %>
+                        <span class="status-badge nok">No signature loaded</span>
+                    <% } %>
+                </div>
 
-        <button type="submit" class="primary-btn" id="btn-save-repo">Save Storage Settings</button>
-    </form>
-</div>
+                <div class="form-group">
+                    <label for="p12file">Upload new signature (.p12 / .pfx)</label>
+                    <input type="file" name="p12file" id="p12file" accept=".p12,.pfx">
+                    <small>Upload a file to replace the current signature. Leave this field empty to keep the current one.</small>
+                </div>
 
-<p class="settings-back-link"><a href="/" class="back-link">← Back to Dashboard</a></p>
+                <div class="form-group">
+                    <label for="passphrase">Signature Password</label>
+                    <input type="password" name="passphrase" id="passphrase"
+                           autocomplete="new-password"
+                           placeholder="<%= signatureSettings.hasCertificate
+                                   ? '••••••••  (leave blank to keep current)'
+                                   : 'Enter the password' %>">
+                    <small>
+                        <% if (signatureSettings.hasCertificate) { %>
+                            Password saved. Only fill this field if you want to alter it.
+                        <% } else { %>
+                            Mandatory.
+                        <% } %>
+                    </small>
+                </div>
+            </section>
 
-<script>
-    function showTab(tabId, btn) {
-        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        btn.classList.add('active');
-    }
+            <!-- Institution Metadata -->
+            <section class="section">
+                <h2>Institution Metadata</h2>
+                <p class="section-subtitle">
+                    This data is visible on PDF readers when verifying signatures.
+                </p>
 
-    // Auto-activate the correct tab if the page was submitted
-    <% if (successMessage || errorMessage) { %>
+                <div class="form-group">
+                    <label for="name">Institution Name</label>
+                    <input type="text" name="name" id="name"
+                           value="<%= signatureSettings.name %>"
+                           placeholder="Ex.: Universidade de Lisboa">
+                </div>
+
+                <div class="form-group">
+                    <label for="contact">Contact Email</label>
+                    <input type="email" name="contact" id="contact"
+                           value="<%= signatureSettings.contact %>"
+                           placeholder="Ex.: certificados@universidade.pt">
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" name="location" id="location"
+                           value="<%= signatureSettings.location %>"
+                           placeholder="Ex.: Lisboa, Portugal">
+                </div>
+
+                <div class="form-group">
+                    <label for="reason">Reason for Signature</label>
+                    <input type="text" name="reason" id="reason"
+                           value="<%= signatureSettings.reason %>"
+                           placeholder="Ex.: Course Certificate Authentication">
+                </div>
+            </section>
+
+            <button type="submit" class="primary-btn" id="btn-save-signature">Save Settings</button>
+        </form>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         TAB 2 — REPOSITORY SETTINGS
+         ══════════════════════════════════════════════════ -->
+    <div id="tab-repo" class="tab-panel">
+        <form action="/admin/settings/repo" method="POST">
+
+            <section class="section">
+                <h2>Certificate Storage Settings</h2>
+                <p class="section-subtitle">
+                    Configure local storage settings for generated certificates.
+                </p>
+
+                <div class="form-group">
+                    <label for="maxSize">Max Allowed Size</label>
+                    <div class="size-input-row">
+                        <input type="number" name="maxSize" id="maxSize"
+                               value="<%= typeof repoSettings !== 'undefined' ? repoSettings.size : '' %>"
+                               placeholder="Ex.: 10. Leave this field empty to not change it.">
+
+                        <select name="maxSizeUnit" id="maxSizeUnit" class="size-unit-select">
+                            <% const currentUnit = typeof repoSettings !== 'undefined' ? repoSettings.unit : 'MB'; %>
+                            <option value="B" <%= currentUnit === 'B' ? 'selected' : '' %>>Bytes</option>
+                            <option value="KB" <%= currentUnit === 'KB' ? 'selected' : '' %>>KB</option>
+                            <option value="MB" <%= currentUnit === 'MB' ? 'selected' : '' %>>MB</option>
+                            <option value="GB" <%= currentUnit === 'GB' ? 'selected' : '' %>>GB</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="maxUsePercentage">Max size usage Percentage (%)</label>
+                    <input type="number" name="maxUsePercentage" id="maxUsePercentage" min="1" max="100"
+                           placeholder="Ex.: 90. Leave this field empty to not change it.">
+                    <small>If this threshold is exceeded, older certificates are deleted.</small>
+                </div>
+            </section>
+
+            <button type="submit" class="primary-btn" id="btn-save-repo">Save Storage Settings</button>
+        </form>
+    </div>
+
+    <script>
+        function showTab(tabId, btn) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        // Auto-activate the correct tab if the page was submitted
+        <% if (successMessage || errorMessage) { %>
         if (document.referrer.includes('/signature')) showTab('tab-signature', document.getElementById('btn-tab-signature'));
         //if (document.referrer.includes('/email')) showTab('tab-email', document.getElementById('btn-tab-email'));
-    <% } %>
-</script>
+        <% } %>
+    </script>
+
+</div>
+
+
 </body>
 </html>
