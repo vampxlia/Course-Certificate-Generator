@@ -1,3 +1,4 @@
+// my_code
 import {Template} from "../../model/template";
 
 export interface ITemplateDAO {

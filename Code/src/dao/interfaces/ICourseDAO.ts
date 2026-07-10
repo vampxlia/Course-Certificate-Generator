@@ -1,3 +1,4 @@
+// my_code
 import {Course} from "../../model/course";
 
 export interface ICourseDAO {

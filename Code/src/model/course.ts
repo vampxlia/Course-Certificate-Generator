@@ -1,3 +1,5 @@
+// my_code
+
 export class Course {
     private readonly _id: number;
     private readonly _name: string;
