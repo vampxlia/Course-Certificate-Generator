@@ -7,88 +7,91 @@
 </head>
 <body>
 
-<h1>Certificate Templates</h1>
+<%- include('../partials/_topbar') %>
 
-<p><a href="/">Back to Dashboard</a></p>
+<div class="page-content-wrapper" style="margin-top: 80px; width: 100%;">
 
-<div class="template-actions-bar">
-    <form action="/templates" method="GET" class="form-inline">
-        <input type="text" name="search" placeholder="Search by name or ID" value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>" class="search-input">
-        <button type="submit" class="primary-btn">Search</button>
-        <% if (typeof searchQuery !== 'undefined' && searchQuery) { %>
-            <a href="/templates" class="search-clear">Clear</a>
-        <% } %>
-    </form>
+    <h1>Certificate Templates</h1>
 
-    <a href="/templates/create">
-        <button class="success-btn">Create New Template</button>
-    </a>
+    <div class="template-actions-bar">
+        <form action="/templates" method="GET" class="form-inline">
+            <input type="text" name="search" placeholder="Search by name or ID" value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>" class="search-input">
+            <button type="submit" class="primary-btn">Search</button>
+            <% if (typeof searchQuery !== 'undefined' && searchQuery) { %>
+                <a href="/templates" class="search-clear">Clear</a>
+            <% } %>
+        </form>
+
+        <a href="/templates/create">
+            <button class="success-btn">Create New Template</button>
+        </a>
+    </div>
+
+    <% if (typeof searchQuery !== 'undefined' && searchQuery) { %>
+        <p>Showing results for: <strong><%= searchQuery %></strong></p>
+    <% } %>
+
+    <% if (templates && templates.length > 0) { %>
+
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Course</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <% templates.forEach(template => { %>
+                <% const matchedCourse = (courses || []).find(c => c.id === template.courseId); %>
+                <tr>
+                    <td><%= template.id %></td>
+                    <td><%= template.name %></td>
+                    <td><%= matchedCourse ? matchedCourse.name : (template.courseId || 'None') %></td>
+
+                    <td>
+
+                        <a href="/templates/edit/<%= template.id %>">
+                            <button type="button" class="primary-btn">Edit</button>
+                        </a>
+
+                        <form
+                                action="/templates/delete"
+                                method="POST"
+                                class="form-inline-delete"
+                        >
+                            <input
+                                    type="hidden"
+                                    name="id"
+                                    value="<%= template.id %>"
+                            >
+
+                            <button
+                                    type="submit"
+                                    class="danger-btn"
+                                    onclick="return confirm('Delete this template?')"
+                            >
+                                Delete
+                            </button>
+                        </form>
+
+                    </td>
+                </tr>
+
+            <% }) %>
+
+            </tbody>
+        </table>
+
+    <% } else { %>
+
+        <p>No templates found.</p>
+
+    <% } %>
+
 </div>
-
-<% if (typeof searchQuery !== 'undefined' && searchQuery) { %>
-    <p>Showing results for: <strong><%= searchQuery %></strong></p>
-<% } %>
-
-<% if (templates && templates.length > 0) { %>
-
-<table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Course</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-
-    <tbody>
-
-    <% templates.forEach(template => { %>
-        <% const matchedCourse = (courses || []).find(c => c.id === template.courseId); %>
-        <tr>
-            <td><%= template.id %></td>
-            <td><%= template.name %></td>
-            <td><%= matchedCourse ? matchedCourse.name : (template.courseId || 'None') %></td>
-
-            <td>
-
-                <a href="/templates/edit/<%= template.id %>">
-                    <button type="button" class="primary-btn">Edit</button>
-                </a>
-
-                <form
-                    action="/templates/delete"
-                    method="POST"
-                    class="form-inline-delete"
-                >
-                    <input
-                        type="hidden"
-                        name="id"
-                        value="<%= template.id %>"
-                    >
-
-                    <button
-                        type="submit"
-                        class="danger-btn"
-                        onclick="return confirm('Delete this template?')"
-                    >
-                        Delete
-                    </button>
-                </form>
-
-            </td>
-        </tr>
-
-    <% }) %>
-
-    </tbody>
-</table>
-
-<% } else { %>
-
-<p>No templates found.</p>
-
-<% } %>
-
 </body>
 </html>

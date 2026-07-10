@@ -6,9 +6,11 @@
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
+
+<%- include('partials/_topbar') %>
+
 <div class="card">
     <h1>Generate Certificates</h1>
-    <p><a href="/">Back to Dashboard</a></p>
 
     <% if (successMessage) { %> <div class="success"><%= successMessage %></div> <% } %>
     <% if (typeof errorMessage !== 'undefined' && errorMessage) { %> <div class="error"><%= errorMessage %></div> <% } %>
