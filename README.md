@@ -1,6 +1,6 @@
 Certificate Course Generator
 
-> A secure web application designed to automate the generation, digital signing, and email distribution of official course completion certificates, featuring role-based access control (RBAC) and institutional database integration.
+> A web application designed to automate the generation, signing using .pk12 certificates, and email distribution of course completion certificates, featuring role-based access control (RBAC).
 
 ---
 
@@ -41,7 +41,7 @@ Follow these step-by-step instructions to set up and execute the application loc
 
 #### 1.1 Local Authentication Database (`autenticacao-db`)
 1. Open your MySQL client or database management tool.
-2. Navigate to the `DataBase/autenticacao-db` directory.
+2. Navigate to the `DataBase/auth-db` directory.
 3. Execute the SQL scripts in the following order:
    1. `AuthDatabaseSetup.sql` (Creates schema and tables)
    2. `AuthDatabasePopulateMockData.sql` (Populates initial mock data)
@@ -49,18 +49,19 @@ Follow these step-by-step instructions to set up and execute the application loc
 #### 1.2 Simulated Academic System Database (`sistema-academico-db`)
 1. Open a terminal and navigate to the simulated database folder:
    ```bash
-   cd DataBase/sistema-academico-db
+   cd DataBase/academic-system-db
    ```
 2. Spin up the containerized database using Docker Compose:
    ```bash
    docker compose up -d
    ```
+If you wish to use your own database for student data, you need to implement the `ICourseDAO` and `IStudentDAO` in accordance to it, present in the `WebApp/src/dao/interfaces` directory.
 
 ---
 
 ### 2. Environment Variables Setup
 
-Create a `.env` file in the `Code/` root directory (`Code/.env`) with the following required configuration variables:
+Create a `.env` file in the `WebApp/src` directory (`WebApp/src/.env`) with the following required configuration variables:
 
 ```env
 # Authentication Database Configuration (Local MySQL)
@@ -83,9 +84,9 @@ NODE_ENV='local'
 
 ### 3. Dependency Installation & Server Launch
 
-1. Navigate to the main code directory:
+1. Navigate to the main web app directory:
    ```bash
-   cd Code
+   cd WebApp
    ```
 2. Install the necessary project dependencies:
    ```bash
@@ -104,7 +105,11 @@ Once the server has started successfully, open your web browser and navigate to:
 
 **[http://localhost:3000](http://localhost:3000)**
 
+The following test users are provided in the mock authentication database:
 
+**User** - Email: `user@example.com`, Password: `admin123`
+
+**Admin** - Email: `admin@example.com`, Password: `admin123`
 
 
 
