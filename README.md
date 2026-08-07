@@ -14,12 +14,21 @@ Course Certificate Generation System
 
 ---
 
-## Tech Stack & Architecture
+## Tech Stack
 
-- **Runtime Environment:** Node.js (v18+)
-- **Language:** TypeScript
-- **Database Systems:** MySQL (Local Authentication DB & Dockerized Academic System DB)
-- **Authorization Engine:** Casbin (RBAC)
+`Typescript`
+
+`Node.js`
+
+`Express.js`
+
+`Ejs`
+
+`HTML5`
+
+`CSS3`
+
+`MySQL`
 
 ---
 
@@ -55,7 +64,7 @@ Follow these step-by-step instructions to set up and execute the application loc
    ```bash
    docker compose up -d
    ```
-If you wish to use your own database for student data, you need to implement the `ICourseDAO` and `IStudentDAO` in accordance to it, present in the `WebApp/src/dao/interfaces` directory.
+If you wish to use your own database for student data, you need to implement the `ICourseDAO` and `IStudentDAO` interfaces in accordance to it, present in the `WebApp/src/dao/interfaces` directory.
 
 ---
 
