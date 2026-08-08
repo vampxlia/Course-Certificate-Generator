@@ -2,6 +2,8 @@ Course Certificate Generation System
 
 > A web application designed to automate the generation, signing using .pk12 certificates, and email distribution of course completion certificates, featuring role-based access control (RBAC) and a built-in editor allowing users to customize their own course certificates.
 
+https://github.com/user-attachments/assets/bfbfc347-ba68-42a1-b050-2b1405f722df
+
 ---
 
 ## Features
